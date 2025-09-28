@@ -5,61 +5,38 @@
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
 >
-  <!-- Background circle -->
+  <!-- Background circle with Apple Music red -->
   <circle
     cx="8"
     cy="8"
     r="8"
-    fill="#0ea5e9"
+    fill="#fa243c"
   />
 
-  <!-- Music note -->
+  <!-- Music note paths (scaled for 16x16) -->
   <path
-    d="M6 4C6 3.44772 6.44772 3 7 3H9C9.55228 3 10 3.44772 10 4V10C10 10.5523 9.55228 11 9 11H7C6.44772 11 6 10.5523 6 10V4Z"
-    fill="white"
+    d="M6 12.67C6 13.77 5.1 14.67 4 14.67C2.9 14.67 2 13.77 2 12.67C2 11.57 2.9 10.67 4 10.67C5.1 10.67 6 11.57 6 12.67Z"
+    stroke="white"
+    stroke-width="1"
   />
-
-  <!-- Note stem -->
-  <rect
-    x="9.5"
-    y="4"
-    width="1"
-    height="6"
-    fill="white"
-  />
-
-  <!-- Note flag -->
   <path
-    d="M10.5 4C10.5 4 11.5 4.5 12.5 3.5C13.5 2.5 12.5 1.5 11.5 2.5C10.5 3.5 10.5 4 10.5 4Z"
+    d="M14 11.33C14 12.43 13.1 13.33 12 13.33C10.9 13.33 10 12.43 10 11.33C10 10.23 10.9 9.33 12 9.33C13.1 9.33 14 10.23 14 11.33Z"
+    stroke="white"
+    stroke-width="1"
+  />
+  <path
+    d="M6 12.67V5.33"
+    stroke="white"
+    stroke-width="1"
+  />
+  <path
+    d="M13.5 7.33C13.5 7.61 13.72 7.83 14 7.83C14.28 7.83 14.5 7.61 14.5 7.33H13.5ZM14.5 7.33V4H13.5V7.33H14.5Z"
     fill="white"
   />
-
-  <!-- Musical staff lines -->
-  <line
-    x1="4"
-    y1="12"
-    x2="12"
-    y2="12"
+  <path
+    d="M10.5 2.5L8.5 3.17C7.84 3.39 7.51 3.5 7.32 3.76C7.13 4.02 7.13 4.37 7.13 5.06V8L14 5.33V5.11C14 3.85 14 3.21 13.59 2.91C13.18 2.61 12.57 2.81 10.5 2.5Z"
     stroke="white"
-    stroke-width="0.5"
-    opacity="0.6"
-  />
-  <line
-    x1="4"
-    y1="13"
-    x2="12"
-    y2="13"
-    stroke="white"
-    stroke-width="0.5"
-    opacity="0.6"
-  />
-  <line
-    x1="4"
-    y1="14"
-    x2="12"
-    y2="14"
-    stroke="white"
-    stroke-width="0.5"
-    opacity="0.6"
+    stroke-width="1"
+    stroke-linecap="round"
   />
 </svg>

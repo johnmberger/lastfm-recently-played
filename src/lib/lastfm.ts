@@ -31,7 +31,7 @@ export async function getRecentTracks(): Promise<Track[]> {
     user: USERNAME,
     api_key: API_KEY,
     format: "json",
-    limit: "50",
+    limit: "51",
   });
 
   const url = `${API_URL}?${params.toString()}`;

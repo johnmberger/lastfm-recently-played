@@ -76,12 +76,12 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
         ></div>
 
         <main className="relative z-10">
-          <div className="container mx-auto px-4 py-16 sm:py-20 lg:py-24">
+          <div className="container mx-auto px-4 pt-8 pb-16 sm:pt-12 sm:pb-20 lg:pt-16 lg:pb-24">
             {/* Tracks Section */}
             <section className="animate-slide-up">
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white">
+                  <h2 className="text-3xl sm:text-4xl font-bold text-white">
                     Latest Tracks
                   </h2>
                   <div className="flex items-center gap-2 text-sm text-dark-400">
@@ -118,7 +118,7 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
                   </div>
                 </div>
                 <p className="text-dark-400">
-                  Discover what's been spinning on my playlist
+                  Discover what I've been listening to
                 </p>
                 <div className="text-xs text-dark-500 mt-1">
                   Last updated: {formatTime(lastUpdated)}
