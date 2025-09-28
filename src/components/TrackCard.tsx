@@ -1,7 +1,7 @@
 "use client";
 import { Track } from "@/lib/lastfm";
-import Image from "next/image";
 import { useState } from "react";
+import { formatTrackDate } from "@/lib/dateUtils";
 
 interface TrackCardProps {
   track: Track;
@@ -16,16 +16,6 @@ export default function TrackCard({ track }: TrackCardProps) {
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23374155'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='24' fill='%236b7280' text-anchor='middle' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
 
   const isNowPlaying = track["@attr"]?.nowplaying === "true";
-
-  const formatDate = (uts: string) => {
-    const date = new Date(parseInt(uts) * 1000);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <div
@@ -140,7 +130,7 @@ export default function TrackCard({ track }: TrackCardProps) {
         {track.date?.uts && (
           <div className="flex items-center gap-2 text-xs text-dark-400">
             <div className="w-1.5 h-1.5 bg-primary-500 rounded-full"></div>
-            <span>{formatDate(track.date.uts)}</span>
+            <span>{formatTrackDate(track.date.uts)}</span>
           </div>
         )}
       </div>

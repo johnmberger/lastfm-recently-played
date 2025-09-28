@@ -1,0 +1,85 @@
+<svg
+  width="180"
+  height="180"
+  viewBox="0 0 180 180"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient
+      id="bgGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        style="stop-color:#0ea5e9;stop-opacity:1"
+      />
+      <stop
+        offset="100%"
+        style="stop-color:#d946ef;stop-opacity:1"
+      />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle
+    cx="90"
+    cy="90"
+    r="90"
+    fill="url(#bgGradient)"
+  />
+
+  <!-- Music note -->
+  <path
+    d="M67.5 45C67.5 38.6487 72.6487 33.5 79 33.5H101C107.351 33.5 112.5 38.6487 112.5 45V112.5C112.5 118.851 107.351 124 101 124H79C72.6487 124 67.5 118.851 67.5 112.5V45Z"
+    fill="white"
+  />
+
+  <!-- Note stem -->
+  <rect
+    x="106.875"
+    y="45"
+    width="11.25"
+    height="67.5"
+    fill="white"
+  />
+
+  <!-- Note flag -->
+  <path
+    d="M118.125 45C118.125 45 129.375 50.625 140.625 39.375C151.875 28.125 140.625 16.875 129.375 28.125C118.125 39.375 118.125 45 118.125 45Z"
+    fill="white"
+  />
+
+  <!-- Musical staff lines -->
+  <line
+    x1="45"
+    y1="135"
+    x2="135"
+    y2="135"
+    stroke="white"
+    stroke-width="2.25"
+    opacity="0.6"
+  />
+  <line
+    x1="45"
+    y1="146.25"
+    x2="135"
+    y2="146.25"
+    stroke="white"
+    stroke-width="2.25"
+    opacity="0.6"
+  />
+  <line
+    x1="45"
+    y1="157.5"
+    x2="135"
+    y2="157.5"
+    stroke="white"
+    stroke-width="2.25"
+    opacity="0.6"
+  />
+</svg>
