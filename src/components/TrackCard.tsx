@@ -21,7 +21,7 @@ export default function TrackCard({ track }: TrackCardProps) {
     <div
       className={`group apple-glass-card perspective-1000 h-full flex flex-col transition-all duration-700 ease-out ${
         isNowPlaying
-          ? "ring-2 ring-accent-500/30 shadow-2xl shadow-accent-500/10"
+          ? "ring-2 ring-pink-500/40 shadow-2xl shadow-pink-500/20"
           : ""
       } ${isHovered ? "apple-glass-hover" : ""}`}
       onMouseEnter={() => setIsHovered(true)}
@@ -66,7 +66,7 @@ export default function TrackCard({ track }: TrackCardProps) {
             href={track.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-9 h-9 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20 hover:bg-white/20 hover:scale-110 transition-all duration-300 ease-out"
+            className="w-9 h-9 bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl rounded-full flex items-center justify-center border border-purple-400/30 hover:from-purple-500/30 hover:to-pink-500/30 hover:scale-110 transition-all duration-300 ease-out"
           >
             <svg
               className="w-4 h-4 text-white"
@@ -89,14 +89,14 @@ export default function TrackCard({ track }: TrackCardProps) {
       <div className="p-6 space-y-5 flex-1 flex flex-col justify-between">
         {/* Track Name */}
         <div className="space-y-2">
-          <h3 className="font-semibold text-white text-xl leading-tight line-clamp-2 group-hover:text-white/90 transition-all duration-500 ease-out">
+          <h3 className="font-semibold text-white text-xl leading-tight line-clamp-2 group-hover:text-pink-300 transition-all duration-500 ease-out">
             {track.name}
           </h3>
-          <p className="text-white/70 text-sm font-medium line-clamp-1 group-hover:text-white/80 transition-all duration-500 ease-out">
+          <p className="text-blue-200 text-sm font-medium line-clamp-1 group-hover:text-blue-100 transition-all duration-500 ease-out">
             {track.artist["#text"]}
           </p>
           {track.album["#text"] && (
-            <p className="text-white/50 text-xs line-clamp-1 group-hover:text-white/60 transition-all duration-500 ease-out">
+            <p className="text-purple-200 text-xs line-clamp-1 group-hover:text-purple-100 transition-all duration-500 ease-out">
               {track.album["#text"]}
             </p>
           )}
@@ -105,8 +105,8 @@ export default function TrackCard({ track }: TrackCardProps) {
         {/* Date and Now Playing */}
         <div className="flex items-center justify-between">
           {track.date?.uts && (
-            <div className="flex items-center gap-2 text-xs text-white/40 group-hover:text-white/60 transition-all duration-500 ease-out">
-              <div className="w-1.5 h-1.5 bg-white/60 rounded-full group-hover:bg-white/80 transition-all duration-500 ease-out"></div>
+            <div className="flex items-center gap-2 text-xs text-cyan-300 group-hover:text-cyan-200 transition-all duration-500 ease-out">
+              <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full group-hover:bg-cyan-300 transition-all duration-500 ease-out"></div>
               <span>{formatTrackDate(track.date.uts)}</span>
             </div>
           )}

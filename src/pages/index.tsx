@@ -60,18 +60,18 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
         twitterTitle="What Is John Listening To? | Stalking John Made Easy"
         twitterDescription="Stalk my music in real-time! See what's currently spinning, what I've been obsessed with lately, and catch me in my musical guilty pleasures."
       />
-      <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 relative overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
 
         {/* Floating Orbs */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary-500/20 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-500/30 via-purple-500/20 to-pink-500/30 rounded-full blur-3xl animate-float"></div>
         <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-accent-500/20 rounded-full blur-3xl animate-float"
+          className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-purple-500/25 via-pink-500/20 to-red-500/25 rounded-full blur-3xl animate-float"
           style={{ animationDelay: "2s" }}
         ></div>
         <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary-400/10 rounded-full blur-3xl animate-float"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-cyan-500/20 via-blue-500/15 to-purple-500/20 rounded-full blur-3xl animate-float"
           style={{ animationDelay: "4s" }}
         ></div>
 
@@ -81,22 +81,22 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
             <section className="animate-slide-up">
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-3xl sm:text-4xl font-bold text-white">
+                  <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
                     Latest Tracks
                   </h2>
                   <div className="flex items-center gap-2 text-sm text-dark-400">
                     <div
                       className={`w-2 h-2 rounded-full ${
                         isRefreshing
-                          ? "bg-accent-500 animate-pulse"
-                          : "bg-primary-500"
+                          ? "bg-pink-500 animate-pulse"
+                          : "bg-green-500"
                       }`}
                     ></div>
                     <span>Live</span>
                     <button
                       onClick={handleManualRefresh}
                       disabled={isRefreshing}
-                      className="text-primary-400 hover:text-primary-300 transition-colors duration-200 disabled:opacity-50"
+                      className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 disabled:opacity-50"
                       title="Refresh tracks"
                     >
                       <svg
@@ -133,7 +133,7 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
               <div className="glass-card p-6 max-w-md mx-auto mb-8">
                 <a
                   href="/artists"
-                  className="text-accent-400 hover:text-accent-300 transition-colors duration-200 font-semibold text-lg"
+                  className="text-pink-400 hover:text-pink-300 transition-colors duration-200 font-semibold text-lg"
                 >
                   View Top Artists →
                 </a>
@@ -145,15 +145,12 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
               <div className="glass-card p-6 max-w-md mx-auto">
                 <p className="text-dark-300 text-sm">
                   Built with{" "}
-                  <span className="text-primary-400 font-semibold">
-                    Next.js
-                  </span>
-                  ,{" "}
-                  <span className="text-accent-400 font-semibold">
+                  <span className="text-blue-400 font-semibold">Next.js</span>,{" "}
+                  <span className="text-cyan-400 font-semibold">
                     Tailwind CSS
                   </span>
                   , and the{" "}
-                  <span className="text-primary-400 font-semibold">
+                  <span className="text-purple-400 font-semibold">
                     Last.fm API
                   </span>
                 </p>
