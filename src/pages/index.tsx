@@ -1,6 +1,17 @@
 import RecentTracksList from '@/components/RecentTracksList';
+import { getRecentTracks, Track } from '@/lib/lastfm';
+import { GetServerSideProps } from 'next';
 
-export default function Home() {
+export const getServerSideProps: GetServerSideProps = async () => {
+  const tracks = await getRecentTracks();
+  return {
+    props: {
+      tracks,
+    },
+  };
+};
+
+export default function Home({ tracks }: { tracks: Track[] }) {
   return (
     <main className="bg-neutral-900 min-h-screen text-white">
       <div className="container mx-auto px-4 py-12">
@@ -10,7 +21,7 @@ export default function Home() {
         </header>
         
         <section>
-          <RecentTracksList />
+          <RecentTracksList tracks={tracks} />
         </section>
 
         <footer className="text-center mt-12 text-neutral-500">
