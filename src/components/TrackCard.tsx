@@ -51,23 +51,6 @@ export default function TrackCard({ track }: TrackCardProps) {
           />
         </div>
 
-        {/* Play Button Overlay */}
-        <div
-          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
-            isHovered ? "opacity-100 scale-100" : "opacity-0 scale-75"
-          } z-20`}
-        >
-          <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
-            <svg
-              className="w-6 h-6 text-white ml-1"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
-        </div>
-
         {/* Now Playing Badge */}
         {isNowPlaying && (
           <div className="absolute top-3 left-3 z-20">
