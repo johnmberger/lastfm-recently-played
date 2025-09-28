@@ -97,26 +97,6 @@ export default function ArtistsPage({
         <div className="container mx-auto px-4 py-16 sm:py-20 lg:py-24">
           {/* Header */}
           <header className="text-center mb-16 sm:mb-20 lg:mb-24 animate-fade-in">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-accent-500 to-primary-500 rounded-2xl mb-6 animate-glow">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-6">
-              <span className="gradient-text text-shadow-lg">
-                Weekly Top Artists
-              </span>
-            </h1>
-
-            <p className="text-lg sm:text-xl text-dark-300 max-w-2xl mx-auto leading-relaxed mb-8">
-              Your most-played artists this week
-            </p>
-
             {/* Refresh Button */}
             <div className="flex justify-center mb-6">
               <button
@@ -130,20 +110,6 @@ export default function ArtistsPage({
               >
                 {isRefreshing ? "Refreshing..." : "Refresh Data"}
               </button>
-            </div>
-
-            <div className="flex items-center justify-center gap-2 text-sm text-dark-400">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  isRefreshing
-                    ? "bg-accent-500 animate-pulse"
-                    : "bg-primary-500"
-                }`}
-              ></div>
-              {isClient && lastUpdated && (
-                <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
-              )}
-              {!isClient && <span>Loading...</span>}
             </div>
           </header>
 

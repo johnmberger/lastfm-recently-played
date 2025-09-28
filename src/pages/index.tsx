@@ -64,74 +64,52 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
 
       <main className="relative z-10">
         <div className="container mx-auto px-4 py-16 sm:py-20 lg:py-24">
-          {/* Header Section */}
-          <header className="text-center mb-16 sm:mb-20 lg:mb-24 animate-fade-in">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary-500 to-accent-500 rounded-2xl mb-6 animate-glow">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-              </svg>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-6">
-              <span className="gradient-text text-shadow-lg">
-                Recently Played
-              </span>
-            </h1>
-
-            <p className="text-lg sm:text-xl text-dark-300 max-w-2xl mx-auto leading-relaxed">
-              A curated glimpse into my musical journey, powered by{" "}
-              <span className="text-primary-400 font-semibold">Last.fm</span>{" "}
-              and crafted with modern web technologies.
-            </p>
-
-            <div className="flex items-center justify-center gap-2 mt-8 text-sm text-dark-400">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  isRefreshing
-                    ? "bg-accent-500 animate-pulse"
-                    : "bg-primary-500"
-                }`}
-              ></div>
-              <span>Live from Last.fm</span>
-              <button
-                onClick={handleManualRefresh}
-                disabled={isRefreshing}
-                className="ml-2 text-primary-400 hover:text-primary-300 transition-colors duration-200 disabled:opacity-50"
-                title="Refresh tracks"
-              >
-                <svg
-                  className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="text-xs text-dark-500 mt-2">
-              Last updated: {lastUpdated.toLocaleTimeString()}
-            </div>
-          </header>
-
           {/* Tracks Section */}
           <section className="animate-slide-up">
             <div className="mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-                Latest Tracks
-              </h2>
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">
+                  Latest Tracks
+                </h2>
+                <div className="flex items-center gap-2 text-sm text-dark-400">
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      isRefreshing
+                        ? "bg-accent-500 animate-pulse"
+                        : "bg-primary-500"
+                    }`}
+                  ></div>
+                  <span>Live</span>
+                  <button
+                    onClick={handleManualRefresh}
+                    disabled={isRefreshing}
+                    className="text-primary-400 hover:text-primary-300 transition-colors duration-200 disabled:opacity-50"
+                    title="Refresh tracks"
+                  >
+                    <svg
+                      className={`w-4 h-4 ${
+                        isRefreshing ? "animate-spin" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
               <p className="text-dark-400">
                 Discover what's been spinning on my playlist
               </p>
+              <div className="text-xs text-dark-500 mt-1">
+                Last updated: {lastUpdated.toLocaleTimeString()}
+              </div>
             </div>
 
             <RecentTracksList tracks={tracks} />
@@ -163,34 +141,6 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
                   Last.fm API
                 </span>
               </p>
-              <div className="flex items-center justify-center gap-4 mt-4">
-                <a
-                  href="https://nextjs.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-dark-400 hover:text-primary-400 transition-colors duration-200"
-                >
-                  Next.js
-                </a>
-                <span className="text-dark-600">•</span>
-                <a
-                  href="https://tailwindcss.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-dark-400 hover:text-accent-400 transition-colors duration-200"
-                >
-                  Tailwind CSS
-                </a>
-                <span className="text-dark-600">•</span>
-                <a
-                  href="https://last.fm"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-dark-400 hover:text-primary-400 transition-colors duration-200"
-                >
-                  Last.fm
-                </a>
-              </div>
             </div>
           </footer>
         </div>
