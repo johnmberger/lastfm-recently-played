@@ -43,6 +43,18 @@ export async function getRecentTracks(): Promise<Track[]> {
   });
 
   if (!response.ok) {
+    const responseText = await response
+      .text()
+      .catch(() => "<failed to read body>");
+    console.error("Last.fm recent tracks fetch failed", {
+      status: response.status,
+      statusText: response.statusText,
+      url,
+      responseText,
+    });
+  }
+
+  if (!response.ok) {
     throw new Error(
       `Failed to fetch recent tracks from Last.fm: ${response.statusText}`
     );
@@ -53,6 +65,10 @@ export async function getRecentTracks(): Promise<Track[]> {
   const parsedData = recentTracksSchema.safeParse(data);
 
   if (!parsedData.success) {
+    console.error(
+      "Last.fm recent tracks parse error",
+      parsedData.error.format()
+    );
     throw new Error("Failed to parse data from Last.fm API.");
   }
 
@@ -88,6 +104,18 @@ export async function getWeeklyArtists(): Promise<WeeklyArtist[]> {
   });
 
   if (!response.ok) {
+    const responseText = await response
+      .text()
+      .catch(() => "<failed to read body>");
+    console.error("Last.fm weekly artists fetch failed", {
+      status: response.status,
+      statusText: response.statusText,
+      url,
+      responseText,
+    });
+  }
+
+  if (!response.ok) {
     throw new Error(
       `Failed to fetch weekly artists from Last.fm: ${response.statusText}`
     );
@@ -98,6 +126,10 @@ export async function getWeeklyArtists(): Promise<WeeklyArtist[]> {
   const parsedData = weeklyArtistsSchema.safeParse(data);
 
   if (!parsedData.success) {
+    console.error(
+      "Last.fm weekly artists parse error",
+      parsedData.error.format()
+    );
     throw new Error("Failed to parse weekly artists data from Last.fm API.");
   }
 

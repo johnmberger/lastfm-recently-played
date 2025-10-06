@@ -11,9 +11,14 @@ export default async function handler(
 
   try {
     const tracks = await getRecentTracks();
+    console.log("/api/tracks success", { count: tracks.length });
     res.status(200).json(tracks);
   } catch (error) {
-    console.error("API Error:", error);
+    const err = error as any;
+    console.error("/api/tracks error", {
+      message: err?.message,
+      stack: err?.stack,
+    });
     res.status(500).json({ message: "Failed to fetch tracks" });
   }
 }
