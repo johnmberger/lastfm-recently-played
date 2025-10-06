@@ -7,7 +7,7 @@ export const trackSchema = z.object({
   album: albumSchema,
   image: z.array(trackImageSchema),
   name: z.string(),
-  url: z.string().url(),
+  url: z.string().url().or(z.literal("")),
   date: z.object({ uts: z.string() }).optional(),
   "@attr": z.object({ nowplaying: z.string().optional() }).optional(),
 });

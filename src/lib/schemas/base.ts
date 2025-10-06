@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Base schemas used across different Last.fm API responses
 export const trackImageSchema = z.object({
-  "#text": z.string().url(),
+  "#text": z.string().url().or(z.literal("")),
   size: z.string(),
 });
 
