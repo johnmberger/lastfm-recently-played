@@ -14,7 +14,9 @@ export const trackSchema = z.object({
 
 export const recentTracksSchema = z.object({
   recenttracks: z.object({
-    track: z.array(trackSchema),
+    // Some Last.fm responses can return an object keyed by numeric strings
+    // instead of a proper array. Accept both and normalize in the caller.
+    track: z.union([z.array(trackSchema), z.record(z.string(), trackSchema)]),
   }),
 });
 

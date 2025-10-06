@@ -72,7 +72,10 @@ export async function getRecentTracks(): Promise<Track[]> {
     throw new Error("Failed to parse data from Last.fm API.");
   }
 
-  const tracks = parsedData.data.recenttracks.track;
+  const rawTracks = (parsedData.data as any).recenttracks.track;
+  const tracks: Track[] = Array.isArray(rawTracks)
+    ? rawTracks
+    : Object.values(rawTracks);
 
   return tracks;
 }
