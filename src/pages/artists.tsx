@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { getWeeklyArtists, WeeklyArtist } from "@/lib/lastfm";
+import EmptyState from "@/components/EmptyState";
 import MetaTags from "@/components/MetaTags";
 import { formatNumber, getCurrentDate } from "@/lib/dateUtils";
 import {
@@ -17,13 +18,21 @@ import {
 } from "recharts";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const artists = await getWeeklyArtists();
-
-  return {
-    props: {
-      artists,
-    },
-  };
+  try {
+    const artists = await getWeeklyArtists();
+    return {
+      props: {
+        artists,
+      },
+    };
+  } catch (error) {
+    console.error("SSR Error (artists):", error);
+    return {
+      props: {
+        artists: [],
+      },
+    };
+  }
 };
 
 export default function ArtistsPage({
@@ -128,125 +137,137 @@ export default function ArtistsPage({
 
             {/* Charts Section */}
             <section className="animate-slide-up">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                {/* Bar Chart */}
-                <div className="glass-card p-6">
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    Top 10 Artists
-                  </h2>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={chartData}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="rgba(255,255,255,0.1)"
-                        />
-                        <XAxis
-                          dataKey="name"
-                          stroke="#94a3b8"
-                          fontSize={12}
-                          angle={-45}
-                          textAnchor="end"
-                          height={80}
-                        />
-                        <YAxis stroke="#94a3b8" fontSize={12} />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "rgba(15, 23, 42, 0.9)",
-                            border: "1px solid rgba(255,255,255,0.1)",
-                            borderRadius: "8px",
-                            color: "#fff",
-                          }}
-                          formatter={(value: any, name: string, props: any) => [
-                            `${value} plays`,
-                            props.payload.fullName,
-                          ]}
-                        />
-                        <Bar
-                          dataKey="plays"
-                          fill="#0ea5e9"
-                          radius={[4, 4, 0, 0]}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* Pie Chart */}
-                <div className="glass-card p-6">
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    Top 8 Distribution
-                  </h2>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={pieData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }) =>
-                            `${name} (${((percent as number) * 100).toFixed(
-                              0
-                            )}%)`
-                          }
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {pieData.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
+              {artists.length === 0 ? (
+                <EmptyState
+                  title="No artist data"
+                  message="I couldn't fetch your weekly artist chart. This might be a temporary issue with Last.fm or missing configuration."
+                  actionLabel="Try Refresh"
+                  onAction={handleRefresh}
+                />
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                    {/* Bar Chart */}
+                    <div className="glass-card p-6">
+                      <h2 className="text-2xl font-bold text-white mb-6">
+                        Top 10 Artists
+                      </h2>
+                      <div className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={chartData}>
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              stroke="rgba(255,255,255,0.1)"
                             />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "rgba(15, 23, 42, 0.9)",
-                            border: "1px solid rgba(255,255,255,0.1)",
-                            borderRadius: "8px",
-                            color: "#fff",
-                          }}
-                          formatter={(value: any) => [
-                            `${value} plays`,
-                            "Plays",
-                          ]}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
-
-              {/* Artist List */}
-              <div className="glass-card p-6">
-                <h2 className="text-2xl font-bold text-white mb-6">
-                  Complete Ranking
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {artists.map((artist) => (
-                    <div
-                      key={artist.name}
-                      className="glass-card p-4 hover:bg-white/10 transition-all duration-200"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                          {artist["@attr"].rank}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-white truncate">
-                            {artist.name}
-                          </h3>
-                          <p className="text-sm text-dark-400">
-                            {formatNumber(parseInt(artist.playcount))} plays
-                          </p>
-                        </div>
+                            <XAxis
+                              dataKey="name"
+                              stroke="#94a3b8"
+                              fontSize={12}
+                              angle={-45}
+                              textAnchor="end"
+                              height={80}
+                            />
+                            <YAxis stroke="#94a3b8" fontSize={12} />
+                            <Tooltip
+                              contentStyle={{
+                                backgroundColor: "rgba(15, 23, 42, 0.9)",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                borderRadius: "8px",
+                                color: "#fff",
+                              }}
+                              formatter={(
+                                value: any,
+                                name: string,
+                                props: any
+                              ) => [`${value} plays`, props.payload.fullName]}
+                            />
+                            <Bar
+                              dataKey="plays"
+                              fill="#0ea5e9"
+                              radius={[4, 4, 0, 0]}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+
+                    {/* Pie Chart */}
+                    <div className="glass-card p-6">
+                      <h2 className="text-2xl font-bold text-white mb-6">
+                        Top 8 Distribution
+                      </h2>
+                      <div className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={pieData}
+                              cx="50%"
+                              cy="50%"
+                              labelLine={false}
+                              label={({ name, percent }) =>
+                                `${name} (${((percent as number) * 100).toFixed(
+                                  0
+                                )}%)`
+                              }
+                              outerRadius={80}
+                              fill="#8884d8"
+                              dataKey="value"
+                            >
+                              {pieData.map((entry, index) => (
+                                <Cell
+                                  key={`cell-${index}`}
+                                  fill={COLORS[index % COLORS.length]}
+                                />
+                              ))}
+                            </Pie>
+                            <Tooltip
+                              contentStyle={{
+                                backgroundColor: "rgba(15, 23, 42, 0.9)",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                borderRadius: "8px",
+                                color: "#fff",
+                              }}
+                              formatter={(value: any) => [
+                                `${value} plays`,
+                                "Plays",
+                              ]}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Artist List */}
+                  <div className="glass-card p-6">
+                    <h2 className="text-2xl font-bold text-white mb-6">
+                      Complete Ranking
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {artists.map((artist) => (
+                        <div
+                          key={artist.name}
+                          className="glass-card p-4 hover:bg-white/10 transition-all duration-200"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                              {artist["@attr"].rank}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-white truncate">
+                                {artist.name}
+                              </h3>
+                              <p className="text-sm text-dark-400">
+                                {formatNumber(parseInt(artist.playcount))} plays
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </section>
 
             {/* Navigation */}

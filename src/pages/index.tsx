@@ -1,4 +1,5 @@
 import RecentTracksList from "@/components/RecentTracksList";
+import EmptyState from "@/components/EmptyState";
 import { getRecentTracks, Track } from "@/lib/lastfm";
 import { GetServerSideProps } from "next";
 import { useState, useEffect } from "react";
@@ -6,12 +7,21 @@ import MetaTags from "@/components/MetaTags";
 import { formatTime, getCurrentDate } from "@/lib/dateUtils";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const tracks = await getRecentTracks();
-  return {
-    props: {
-      tracks,
-    },
-  };
+  try {
+    const tracks = await getRecentTracks();
+    return {
+      props: {
+        tracks,
+      },
+    };
+  } catch (error) {
+    console.error("SSR Error (index):", error);
+    return {
+      props: {
+        tracks: [],
+      },
+    };
+  }
 };
 
 export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
@@ -125,7 +135,16 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
                 </div>
               </div>
 
-              <RecentTracksList tracks={tracks} />
+              {tracks.length === 0 ? (
+                <EmptyState
+                  title="No recent tracks"
+                  message="I couldn't fetch your recent tracks. This might be a temporary issue with Last.fm or missing configuration."
+                  actionLabel="Try Refresh"
+                  onAction={handleManualRefresh}
+                />
+              ) : (
+                <RecentTracksList tracks={tracks} />
+              )}
             </section>
 
             {/* Navigation */}
