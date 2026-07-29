@@ -234,6 +234,89 @@
   animation: eq-bar-4 1.3s ease-in-out infinite;
 }
 
+/* Earworm sound-wave — dense sine samples so motion stays smooth (not a jagged W) */
+@keyframes worm-wave {
+  0% {
+    transform: translateY(0px);
+  }
+  4.166% {
+    transform: translateY(2.85px);
+  }
+  8.333% {
+    transform: translateY(5.5px);
+  }
+  12.5% {
+    transform: translateY(7.78px);
+  }
+  16.666% {
+    transform: translateY(9.53px);
+  }
+  20.833% {
+    transform: translateY(10.65px);
+  }
+  25% {
+    transform: translateY(11px);
+  }
+  29.166% {
+    transform: translateY(10.65px);
+  }
+  33.333% {
+    transform: translateY(9.53px);
+  }
+  37.5% {
+    transform: translateY(7.78px);
+  }
+  41.666% {
+    transform: translateY(5.5px);
+  }
+  45.833% {
+    transform: translateY(2.85px);
+  }
+  50% {
+    transform: translateY(0px);
+  }
+  54.166% {
+    transform: translateY(-2.85px);
+  }
+  58.333% {
+    transform: translateY(-5.5px);
+  }
+  62.5% {
+    transform: translateY(-7.78px);
+  }
+  66.666% {
+    transform: translateY(-9.53px);
+  }
+  70.833% {
+    transform: translateY(-10.65px);
+  }
+  75% {
+    transform: translateY(-11px);
+  }
+  79.166% {
+    transform: translateY(-10.65px);
+  }
+  83.333% {
+    transform: translateY(-9.53px);
+  }
+  87.5% {
+    transform: translateY(-7.78px);
+  }
+  91.666% {
+    transform: translateY(-5.5px);
+  }
+  95.833% {
+    transform: translateY(-2.85px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.worm-wave-seg {
+  animation: worm-wave 1.6s linear infinite;
+}
+
 /* Loading Screen Animations */
 @keyframes pulse-ring {
   0% {

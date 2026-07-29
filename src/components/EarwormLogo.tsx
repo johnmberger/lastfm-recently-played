@@ -20,66 +20,36 @@ const START_X = 12;
 const SPACING = 8;
 const BASE_Y = 36;
 const AMP = 11;
-const WAVE_DUR = "1.6s";
-const FRAMES = 24;
+const WAVE_DUR_S = 1.6;
 
 /** Tail smaller → mid plump → neck into head */
 function segmentRadius(i: number) {
   const t = i / (SEGMENTS - 1);
-  // ease toward a thicker midsection
   const mid = 1 - Math.abs(t - 0.55) * 1.1;
   return 6.2 + mid * 3.4;
 }
 
-function waveOffset(segmentIndex: number, frame: number) {
-  const phase =
-    (segmentIndex / (SEGMENTS - 1)) * Math.PI * 2 +
-    (frame / FRAMES) * Math.PI * 2;
-  return AMP * Math.sin(phase);
+function waveOffset(segmentIndex: number) {
+  return AMP * Math.sin((segmentIndex / (SEGMENTS - 1)) * Math.PI * 2);
 }
 
-function cyValues(segmentIndex: number) {
-  const values = Array.from({ length: FRAMES }, (_, f) =>
-    (BASE_Y + waveOffset(segmentIndex, f)).toFixed(1)
-  );
-  values.push(values[0]);
-  return values.join(";");
+/** Negative delay = already mid-wave on first paint (no SMIL/hydration lag) */
+function phaseDelay(segmentIndex: number) {
+  return `${(-(segmentIndex / (SEGMENTS - 1)) * WAVE_DUR_S).toFixed(3)}s`;
 }
 
-function translateValues(segmentIndex: number) {
-  const values = Array.from({ length: FRAMES }, (_, f) =>
-    `0 ${waveOffset(segmentIndex, f).toFixed(1)}`
-  );
-  values.push(values[0]);
-  return values.join(";");
-}
-
-/** Smooth underlay path through segment centers for a given frame */
-function bodyPath(frame: number) {
-  const pts = Array.from({ length: SEGMENTS }, (_, i) => ({
-    x: START_X + i * SPACING,
-    y: BASE_Y + waveOffset(i, frame),
-  }));
-
-  let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
-  for (let i = 1; i < pts.length; i++) {
-    const prev = pts[i - 1];
-    const curr = pts[i];
-    const cpx = ((prev.x + curr.x) / 2).toFixed(1);
-    d += ` Q ${cpx} ${prev.y.toFixed(1)} ${curr.x.toFixed(1)} ${curr.y.toFixed(1)}`;
+function waveStyle(segmentIndex: number, isWaving: boolean) {
+  if (isWaving) {
+    return { animationDelay: phaseDelay(segmentIndex) } as const;
   }
-  return d;
-}
-
-function bodyPathValues() {
-  const values = Array.from({ length: FRAMES }, (_, f) => bodyPath(f));
-  values.push(values[0]);
-  return values.join(";");
+  return {
+    transform: `translateY(${waveOffset(segmentIndex).toFixed(1)}px)`,
+  } as const;
 }
 
 /**
- * Continuous worm body: thick gradient underlay + overlapping
- * tapered segments, all locked to the same sine phase.
+ * Continuous worm body via overlapping tapered segments.
+ * Wave uses CSS (not SMIL) so it runs from first paint.
  */
 export default function EarwormLogo({
   className = "",
@@ -104,7 +74,6 @@ export default function EarwormLogo({
   const headGrad = `headFill-${uid}`;
   const headIndex = SEGMENTS - 1;
   const headX = START_X + headIndex * SPACING + 5;
-  const restHeadY = waveOffset(headIndex, 0);
 
   return (
     <div
@@ -124,68 +93,46 @@ export default function EarwormLogo({
           </linearGradient>
         </defs>
 
-        {/* continuous underlay — fills gaps so segments read as one body */}
-        <path
-          d={bodyPath(0)}
-          stroke={`url(#${headGrad})`}
-          strokeWidth="16"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        >
-          {isWaving && (
-            <animate
-              attributeName="d"
-              values={bodyPathValues()}
-              dur={WAVE_DUR}
-              repeatCount="indefinite"
-              calcMode="linear"
-            />
-          )}
-        </path>
-
-        {/* overlapping tapered segments on top for soft “rings” */}
         {Array.from({ length: SEGMENTS }, (_, i) => {
           const cx = START_X + i * SPACING;
-          const restY = BASE_Y + waveOffset(i, 0);
           return (
-            <circle
-              key={i}
-              cx={cx}
-              cy={restY}
-              r={segmentRadius(i)}
-              fill={`url(#${headGrad})`}
+            <g
+              key={`under-${i}`}
+              className={isWaving ? "worm-wave-seg" : undefined}
+              style={waveStyle(i, isWaving)}
             >
-              {isWaving && (
-                <animate
-                  attributeName="cy"
-                  values={cyValues(i)}
-                  dur={WAVE_DUR}
-                  repeatCount="indefinite"
-                  calcMode="linear"
-                />
-              )}
-            </circle>
+              <circle
+                cx={cx}
+                cy={BASE_Y}
+                r={segmentRadius(i) + 2.5}
+                fill={`url(#${headGrad})`}
+              />
+            </g>
           );
         })}
 
-        {/* head shares last segment phase */}
-        <g
-          transform={
-            isWaving ? undefined : `translate(0 ${restHeadY.toFixed(1)})`
-          }
-        >
-          {isWaving && (
-            <animateTransform
-              attributeName="transform"
-              type="translate"
-              values={translateValues(headIndex)}
-              dur={WAVE_DUR}
-              repeatCount="indefinite"
-              calcMode="linear"
-            />
-          )}
+        {Array.from({ length: SEGMENTS }, (_, i) => {
+          const cx = START_X + i * SPACING;
+          return (
+            <g
+              key={i}
+              className={isWaving ? "worm-wave-seg" : undefined}
+              style={waveStyle(i, isWaving)}
+            >
+              <circle
+                cx={cx}
+                cy={BASE_Y}
+                r={segmentRadius(i)}
+                fill={`url(#${headGrad})`}
+              />
+            </g>
+          );
+        })}
 
+        <g
+          className={isWaving ? "worm-wave-seg" : undefined}
+          style={waveStyle(headIndex, isWaving)}
+        >
           <circle cx={headX} cy={BASE_Y} r="11" fill={`url(#${headGrad})`} />
 
           <circle cx={headX + 4} cy={BASE_Y - 3} r="2.8" fill="#0f172a" />
