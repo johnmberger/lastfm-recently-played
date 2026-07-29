@@ -122,7 +122,7 @@ export default function TrackCard({ track }: TrackCardProps) {
                     <div className="w-0.5 bg-white rounded-full animate-eq-bar-4"></div>
                   </div>
                 </div>
-                <span>NOW PLAYING</span>
+                <span>now playing</span>
               </div>
             </div>
           )}

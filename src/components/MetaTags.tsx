@@ -19,20 +19,31 @@ export interface MetaTagsProps {
   noIndex?: boolean;
 }
 
+const SITE_URL = "https://earworms.johnberger.dev";
+
 const defaultMetaTags = {
-  siteName: "What Am I Listening To?",
-  defaultTitle: "What Am I Listening To?",
+  siteName: "earworms",
+  defaultTitle: "earworms",
   defaultDescription:
-    "Stalk my music listening history! See what's currently spinning, what I've been obsessed with, and discover my musical guilty pleasures in real-time.",
+    "the songs that get stuck in my head. see what's currently spinning, what i've been obsessing over, and discover my musical guilty pleasures in real-time.",
   defaultKeywords:
-    "music stalking, listening history, music discovery, what am i listening to, music obsession, guilty pleasures, music taste",
-  defaultImage: "/placeholder.png",
+    "earworms, music, listening history, music discovery, recently played, music obsession, guilty pleasures, music taste",
+  defaultImage: `${SITE_URL}/placeholder.png`,
   defaultImageWidth: "1200",
   defaultImageHeight: "630",
-  defaultImageAlt: "What Am I Listening To? - Music Stalking Made Easy",
+  defaultImageAlt: "earworms — songs that get stuck in your head",
   themeColor: "#0ea5e9",
   author: "John",
 };
+
+function toAbsoluteUrl(pathOrUrl?: string): string | undefined {
+  if (!pathOrUrl) return undefined;
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+    return pathOrUrl;
+  }
+  const path = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
+  return `${SITE_URL}${path}`;
+}
 
 export default function MetaTags({
   title,
@@ -59,16 +70,20 @@ export default function MetaTags({
   const finalKeywords = keywords || defaultMetaTags.defaultKeywords;
   const finalOgTitle = ogTitle || finalTitle;
   const finalOgDescription = ogDescription || finalDescription;
-  const finalOgImage = ogImage || defaultMetaTags.defaultImage;
+  const finalOgImage =
+    toAbsoluteUrl(ogImage) || defaultMetaTags.defaultImage;
   const finalOgImageWidth = ogImageWidth || defaultMetaTags.defaultImageWidth;
   const finalOgImageHeight =
     ogImageHeight || defaultMetaTags.defaultImageHeight;
   const finalOgImageAlt = ogImageAlt || defaultMetaTags.defaultImageAlt;
   const finalTwitterTitle = twitterTitle || finalTitle;
   const finalTwitterDescription = twitterDescription || finalDescription;
-  const finalTwitterImage = twitterImage || defaultMetaTags.defaultImage;
+  const finalTwitterImage =
+    toAbsoluteUrl(twitterImage) || defaultMetaTags.defaultImage;
   const finalTwitterImageAlt =
     twitterImageAlt || defaultMetaTags.defaultImageAlt;
+  const finalOgUrl = toAbsoluteUrl(ogUrl) || SITE_URL;
+  const finalCanonicalUrl = toAbsoluteUrl(canonicalUrl) || finalOgUrl;
 
   return (
     <Head>
@@ -90,7 +105,7 @@ export default function MetaTags({
       <meta name="keywords" content={finalKeywords} />
 
       {/* Canonical URL */}
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      <link rel="canonical" href={finalCanonicalUrl} />
 
       {/* Open Graph Meta Tags */}
       <meta property="og:type" content="website" />
@@ -101,7 +116,7 @@ export default function MetaTags({
       <meta property="og:image:width" content={finalOgImageWidth} />
       <meta property="og:image:height" content={finalOgImageHeight} />
       <meta property="og:image:alt" content={finalOgImageAlt} />
-      {ogUrl && <meta property="og:url" content={ogUrl} />}
+      <meta property="og:url" content={finalOgUrl} />
 
       {/* Twitter Card Meta Tags */}
       <meta name="twitter:card" content="summary_large_image" />

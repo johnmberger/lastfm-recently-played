@@ -8,10 +8,9 @@ export default function App({ Component, pageProps }: AppProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading time - you can adjust this or remove it for instant loading
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1800);
 
     return () => clearTimeout(timer);
   }, []);

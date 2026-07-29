@@ -59,6 +59,12 @@ const config: Config = {
         "scale-in": "scaleIn 0.3s ease-out",
         float: "float 6s ease-in-out infinite",
         glow: "glow 2s ease-in-out infinite alternate",
+        "worm-crawl": "wormCrawl 2.4s ease-in-out infinite",
+        "worm-wiggle": "wormWiggle 0.8s ease-in-out infinite",
+        "worm-segment": "wormSegment 0.8s ease-in-out infinite",
+        "inch-nudge": "inchNudge 1.4s ease-in-out infinite",
+        "inch-head": "inchHead 1.4s ease-in-out infinite",
+        "wave-head": "waveHead 1.2s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -80,6 +86,34 @@ const config: Config = {
         glow: {
           "0%": { boxShadow: "0 0 20px rgba(14, 165, 233, 0.3)" },
           "100%": { boxShadow: "0 0 30px rgba(14, 165, 233, 0.6)" },
+        },
+        wormCrawl: {
+          "0%, 100%": { transform: "translateX(-12px)" },
+          "50%": { transform: "translateX(12px)" },
+        },
+        wormWiggle: {
+          "0%, 100%": { transform: "rotate(-3deg)" },
+          "50%": { transform: "rotate(3deg)" },
+        },
+        wormSegment: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" },
+        },
+        inchNudge: {
+          "0%, 38%": { transform: "translateX(-8px)" },
+          "72%, 100%": { transform: "translateX(8px)" },
+        },
+        inchHead: {
+          "0%": { transform: "translate(0px, 0px)" },
+          "38%": { transform: "translate(-12px, -4px)" },
+          "72%": { transform: "translate(18px, 0px)" },
+          "100%": { transform: "translate(0px, 0px)" },
+        },
+        // Head rides the wave tip: 36 → 52 → 36 → 20 → 36
+        waveHead: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "25%": { transform: "translateY(16px)" },
+          "75%": { transform: "translateY(-16px)" },
         },
       },
       backdropBlur: {

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { getWeeklyArtists, WeeklyArtist } from "@/lib/lastfm";
 import EmptyState from "@/components/EmptyState";
+import EarwormLogo from "@/components/EarwormLogo";
 import MetaTags from "@/components/MetaTags";
 import { formatNumber, getCurrentDate } from "@/lib/dateUtils";
 import {
@@ -95,14 +96,14 @@ export default function ArtistsPage({
   return (
     <>
       <MetaTags
-        title="My Music Obsessions"
-        description="Judge my music taste! See which artists I've been obsessing over, discover my musical guilty pleasures, and laugh at my questionable listening habits. Charts and stats included!"
-        keywords="music obsessions, artist rankings, music taste, guilty pleasures, music charts, listening habits, music statistics"
-        ogTitle="My Music Obsessions | Judge My Taste"
-        ogDescription="Judge my music taste! See which artists I've been obsessing over, discover my musical guilty pleasures, and laugh at my questionable listening habits."
+        title="top artists"
+        description="the artists stuck in my head this week. charts, rankings, and questionable listening habits — all powered by earworms."
+        keywords="earworms, top artists, music obsessions, artist rankings, music taste, guilty pleasures, music charts"
+        ogTitle="top artists | earworms"
+        ogDescription="the artists stuck in my head this week. charts, rankings, and questionable listening habits."
         ogUrl="/artists"
-        twitterTitle="My Music Obsessions | Judge My Taste"
-        twitterDescription="Judge my music taste! See which artists I've been obsessing over, discover my musical guilty pleasures, and laugh at my questionable listening habits."
+        twitterTitle="top artists | earworms"
+        twitterDescription="the artists stuck in my head this week. charts, rankings, and questionable listening habits."
       />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 relative overflow-hidden">
         {/* Background Elements */}
@@ -119,6 +120,18 @@ export default function ArtistsPage({
           <div className="container mx-auto px-4 py-16 sm:py-20 lg:py-24">
             {/* Header */}
             <header className="text-center mb-16 sm:mb-20 lg:mb-24 animate-fade-in">
+              <a
+                href="/"
+                className="inline-flex items-center justify-center gap-3 mb-8 hover:opacity-80 transition-opacity"
+              >
+                <EarwormLogo size="sm" crawling={false} className="shrink-0" />
+                <span className="text-4xl sm:text-5xl font-bold leading-none bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+                  earworms
+                </span>
+              </a>
+              <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6">
+                top artists
+              </h2>
               {/* Refresh Button */}
               <div className="flex justify-center mb-6">
                 <button
@@ -130,7 +143,7 @@ export default function ArtistsPage({
                       : "bg-primary-500 text-white hover:bg-primary-600 shadow-lg hover:shadow-xl"
                   }`}
                 >
-                  {isRefreshing ? "Refreshing..." : "Refresh Data"}
+                  {isRefreshing ? "refreshing..." : "refresh data"}
                 </button>
               </div>
             </header>
@@ -139,9 +152,9 @@ export default function ArtistsPage({
             <section className="animate-slide-up">
               {artists.length === 0 ? (
                 <EmptyState
-                  title="No artist data"
-                  message="I couldn't fetch your weekly artist chart. This might be a temporary issue with Last.fm or missing configuration."
-                  actionLabel="Try Refresh"
+                  title="no artist data"
+                  message="couldn't fetch the weekly artist chart. might be a temporary last.fm blip or missing config."
+                  actionLabel="try refresh"
                   onAction={handleRefresh}
                 />
               ) : (
@@ -150,7 +163,7 @@ export default function ArtistsPage({
                     {/* Bar Chart */}
                     <div className="glass-card p-6">
                       <h2 className="text-2xl font-bold text-white mb-6">
-                        Top 10 Artists
+                        top 10 artists
                       </h2>
                       <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
@@ -194,7 +207,7 @@ export default function ArtistsPage({
                     {/* Pie Chart */}
                     <div className="glass-card p-6">
                       <h2 className="text-2xl font-bold text-white mb-6">
-                        Top 8 Distribution
+                        top 8 distribution
                       </h2>
                       <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
@@ -241,7 +254,7 @@ export default function ArtistsPage({
                   {/* Artist List */}
                   <div className="glass-card p-6">
                     <h2 className="text-2xl font-bold text-white mb-6">
-                      Complete Ranking
+                      complete ranking
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                       {artists.map((artist) => (
@@ -277,7 +290,7 @@ export default function ArtistsPage({
                   href="/"
                   className="text-primary-400 hover:text-primary-300 transition-colors duration-200 font-semibold"
                 >
-                  ← Back to Recent Tracks
+                  ← back to recent tracks
                 </a>
               </div>
             </footer>

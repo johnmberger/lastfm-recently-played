@@ -1,5 +1,6 @@
 import RecentTracksList from "@/components/RecentTracksList";
 import EmptyState from "@/components/EmptyState";
+import EarwormLogo from "@/components/EarwormLogo";
 import { getRecentTracks, Track } from "@/lib/lastfm";
 import { GetServerSideProps } from "next";
 import { useState, useEffect } from "react";
@@ -61,14 +62,13 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
   return (
     <>
       <MetaTags
-        title="What Is John Listening To?"
-        description="Stalk my music in real-time! See what's currently spinning, what I've been obsessed with lately, and catch me in my musical guilty pleasures. Live updates every 30 seconds!"
-        keywords="what is john listening to, music stalking, live music, current song, music obsession, guilty pleasures, music taste"
-        ogTitle="What Is John Listening To? | Music Stalking Made Easy"
-        ogDescription="Stalk my music in real-time! See what's currently spinning, what I've been obsessed with lately, and catch me in my musical guilty pleasures."
+        description="the songs that get stuck in my head. see what's currently spinning, what i've been obsessing over, and catch my musical guilty pleasures. live updates every 30 seconds."
+        keywords="earworms, recently played, live music, current song, music obsession, guilty pleasures, music taste"
+        ogTitle="earworms"
+        ogDescription="the songs that get stuck in my head. see what's currently spinning, what i've been obsessing over, and catch my musical guilty pleasures."
         ogUrl="/"
-        twitterTitle="What Is John Listening To? | Stalking John Made Easy"
-        twitterDescription="Stalk my music in real-time! See what's currently spinning, what I've been obsessed with lately, and catch me in my musical guilty pleasures."
+        twitterTitle="earworms"
+        twitterDescription="the songs that get stuck in my head. see what's currently spinning, what i've been obsessing over, and catch my musical guilty pleasures."
       />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 relative overflow-hidden">
         {/* Background Elements */}
@@ -90,9 +90,15 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
             {/* Tracks Section */}
             <section className="animate-slide-up">
               <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <EarwormLogo size="md" crawling={false} className="shrink-0" />
+                  <h1 className="text-5xl sm:text-6xl font-bold leading-none bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+                    earworms
+                  </h1>
+                </div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
-                    Latest Tracks
+                  <h2 className="text-3xl sm:text-4xl font-bold text-white">
+                    latest tracks
                   </h2>
                   <div className="flex items-center gap-2 text-sm text-dark-400">
                     <div
@@ -102,12 +108,12 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
                           : "bg-green-500"
                       }`}
                     ></div>
-                    <span>Live</span>
+                    <span>live</span>
                     <button
                       onClick={handleManualRefresh}
                       disabled={isRefreshing}
                       className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 disabled:opacity-50"
-                      title="Refresh tracks"
+                      title="refresh tracks"
                     >
                       <svg
                         className={`w-4 h-4 ${
@@ -128,18 +134,18 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
                   </div>
                 </div>
                 <p className="text-dark-400">
-                  Discover what I've been listening to
+                  discover what i&apos;ve been listening to
                 </p>
                 <div className="text-xs text-dark-500 mt-1">
-                  Last updated: {formatTime(lastUpdated)}
+                  last updated: {formatTime(lastUpdated)}
                 </div>
               </div>
 
               {tracks.length === 0 ? (
                 <EmptyState
-                  title="No recent tracks"
-                  message="I couldn't fetch your recent tracks. This might be a temporary issue with Last.fm or missing configuration."
-                  actionLabel="Try Refresh"
+                  title="no recent tracks"
+                  message="couldn't fetch recent tracks. might be a temporary last.fm blip or missing config."
+                  actionLabel="try refresh"
                   onAction={handleManualRefresh}
                 />
               ) : (
@@ -154,7 +160,7 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
                   href="/artists"
                   className="text-pink-400 hover:text-pink-300 transition-colors duration-200 font-semibold text-lg"
                 >
-                  View Top Artists →
+                  view top artists →
                 </a>
               </div>
             </div>
@@ -163,14 +169,14 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
             <footer className="text-center animate-fade-in">
               <div className="glass-card p-6 max-w-md mx-auto">
                 <p className="text-dark-300 text-sm">
-                  Built with{" "}
-                  <span className="text-blue-400 font-semibold">Next.js</span>,{" "}
+                  built with{" "}
+                  <span className="text-blue-400 font-semibold">next.js</span>,{" "}
                   <span className="text-cyan-400 font-semibold">
-                    Tailwind CSS
+                    tailwind css
                   </span>
                   , and the{" "}
                   <span className="text-purple-400 font-semibold">
-                    Last.fm API
+                    last.fm api
                   </span>
                 </p>
               </div>
