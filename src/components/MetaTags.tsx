@@ -28,7 +28,7 @@ const defaultMetaTags = {
     "the songs that get stuck in my head. see what's currently spinning, what i've been obsessing over, and discover my musical guilty pleasures in real-time.",
   defaultKeywords:
     "earworms, music, listening history, music discovery, recently played, music obsession, guilty pleasures, music taste",
-  defaultImage: `${SITE_URL}/placeholder.png`,
+  defaultImage: `${SITE_URL}/og.png`,
   defaultImageWidth: "1200",
   defaultImageHeight: "630",
   defaultImageAlt: "earworms — songs that get stuck in your head",
