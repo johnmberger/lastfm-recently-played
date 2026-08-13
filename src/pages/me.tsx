@@ -118,13 +118,13 @@ export default function StatsPage({ stats }: StatsPageProps) {
     <>
       <MetaTags
         title="the numbers"
-        description="how things stacked up — and how long i've been at this."
+        description="how things stack up — and how long i've been at this."
         keywords="earworms, listening stats, scrobbles, music stats"
         ogTitle="the numbers | earworms"
-        ogDescription="how things stacked up — and how long i've been at this."
+        ogDescription="how things stack up — and how long i've been at this."
         ogUrl="/me"
         twitterTitle="the numbers | earworms"
-        twitterDescription="how things stacked up — and how long i've been at this."
+        twitterDescription="how things stack up — and how long i've been at this."
       />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
@@ -182,7 +182,7 @@ export default function StatsPage({ stats }: StatsPageProps) {
                 the numbers
               </h2>
               <p className="text-dark-400 text-sm sm:text-base mb-4">
-                how things stacked up — and how long i&apos;ve been at this.
+                how things stack up — and how long i&apos;ve been at this.
               </p>
               <PeriodControl
                 period={period}
