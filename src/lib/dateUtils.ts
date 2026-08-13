@@ -91,3 +91,44 @@ export const getRelativeTime = (date: Date): string => {
 export const getCurrentDate = (): Date => {
   return new Date();
 };
+
+/**
+ * Formats a Last.fm chart unix range as a short week label
+ * e.g. "jul 28 – aug 3"
+ */
+export const formatWeekRange = (fromUts: string, toUts: string): string => {
+  const from = new Date(parseInt(fromUts, 10) * 1000);
+  const to = new Date(parseInt(toUts, 10) * 1000);
+  const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+  const fromLabel = from.toLocaleDateString("en-US", opts).toLowerCase();
+  const toLabel = to.toLocaleDateString("en-US", opts).toLowerCase();
+  return `${fromLabel} – ${toLabel}`;
+};
+
+export type ArtistChartStats = {
+  totalPlays: number;
+  artistCount: number;
+  topSharePercent: number;
+  top5SharePercent: number;
+};
+
+/**
+ * Derive week pulse stats from ranked playcounts
+ */
+export const getArtistChartStats = (
+  playcounts: number[]
+): ArtistChartStats => {
+  const totalPlays = playcounts.reduce((sum, n) => sum + n, 0);
+  const artistCount = playcounts.length;
+  const topSharePercent =
+    totalPlays > 0 && playcounts[0]
+      ? Math.round((playcounts[0] / totalPlays) * 100)
+      : 0;
+  const top5Plays = playcounts
+    .slice(0, 5)
+    .reduce((sum, n) => sum + n, 0);
+  const top5SharePercent =
+    totalPlays > 0 ? Math.round((top5Plays / totalPlays) * 100) : 0;
+
+  return { totalPlays, artistCount, topSharePercent, top5SharePercent };
+};

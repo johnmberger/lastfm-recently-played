@@ -1,8 +1,10 @@
 import RecentTracksList from "@/components/RecentTracksList";
 import EmptyState from "@/components/EmptyState";
 import EarwormLogo from "@/components/EarwormLogo";
+import BuiltBy from "@/components/BuiltBy";
 import { getRecentTracks, Track } from "@/lib/lastfm";
 import { GetServerSideProps } from "next";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import MetaTags from "@/components/MetaTags";
 import { formatTime, getCurrentDate } from "@/lib/dateUtils";
@@ -90,17 +92,49 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
             {/* Tracks Section */}
             <section className="animate-slide-up">
               <div className="mb-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <EarwormLogo size="md" crawling={false} className="shrink-0" />
-                  <h1 className="text-5xl sm:text-6xl font-bold leading-none bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
-                    earworms
-                  </h1>
+                <div className="flex items-start justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-none bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+                      earworms
+                    </h1>
+                    <EarwormLogo
+                      size="md"
+                      crawling={false}
+                      className="shrink-0"
+                    />
+                  </div>
+                  <nav className="hidden md:flex items-center gap-4 shrink-0 mt-2 lg:mt-3 text-sm">
+                    <Link
+                      href="/top-this-week"
+                      className="inline-flex items-center gap-1.5 text-dark-300 hover:text-pink-300 transition-colors group"
+                    >
+                      top this week
+                      <span
+                        aria-hidden="true"
+                        className="transition-transform duration-200 group-hover:translate-x-0.5"
+                      >
+                        →
+                      </span>
+                    </Link>
+                    <Link
+                      href="/me"
+                      className="inline-flex items-center gap-1.5 text-dark-300 hover:text-pink-300 transition-colors group"
+                    >
+                      the numbers
+                      <span
+                        aria-hidden="true"
+                        className="transition-transform duration-200 group-hover:translate-x-0.5"
+                      >
+                        →
+                      </span>
+                    </Link>
+                  </nav>
                 </div>
-                <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-3xl sm:text-4xl font-bold text-white">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-2">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
                     latest tracks
                   </h2>
-                  <div className="flex items-center gap-2 text-sm text-dark-400">
+                  <div className="flex items-center gap-2 text-sm text-dark-400 shrink-0">
                     <div
                       className={`w-2 h-2 rounded-full ${
                         isRefreshing
@@ -153,32 +187,60 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
               )}
             </section>
 
-            {/* Navigation */}
-            <div className="text-center mt-20 sm:mt-24 lg:mt-32 animate-fade-in">
-              <div className="glass-card p-6 max-w-md mx-auto mb-8">
-                <a
-                  href="/artists"
-                  className="text-pink-400 hover:text-pink-300 transition-colors duration-200 font-semibold text-lg"
-                >
-                  view top artists →
-                </a>
-              </div>
-            </div>
+            <footer className="mt-20 sm:mt-24 lg:mt-28 pt-10 border-t border-white/10 animate-fade-in">
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-10 sm:gap-12">
+                <div className="flex flex-col gap-8 sm:gap-10 max-w-lg">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-dark-400 mb-2">
+                      charts
+                    </p>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                      top this week
+                    </h2>
+                    <p className="text-dark-300 text-sm sm:text-base mb-4">
+                      artists, albums, and tracks that got stuck on repeat this
+                      week
+                    </p>
+                    <Link
+                      href="/top-this-week"
+                      className="inline-flex items-center gap-2 text-pink-300 hover:text-pink-200 transition-colors font-semibold group"
+                    >
+                      see the full rankings
+                      <span
+                        aria-hidden="true"
+                        className="transition-transform duration-200 group-hover:translate-x-1"
+                      >
+                        →
+                      </span>
+                    </Link>
+                  </div>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-dark-400 mb-2">
+                      stats
+                    </p>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                      the numbers
+                    </h2>
+                    <p className="text-dark-300 text-sm sm:text-base mb-4">
+                      how the week stacked up — and how long i&apos;ve been at
+                      this.
+                    </p>
+                    <Link
+                      href="/me"
+                      className="inline-flex items-center gap-2 text-pink-300 hover:text-pink-200 transition-colors font-semibold group"
+                    >
+                      dig into the stats
+                      <span
+                        aria-hidden="true"
+                        className="transition-transform duration-200 group-hover:translate-x-1"
+                      >
+                        →
+                      </span>
+                    </Link>
+                  </div>
+                </div>
 
-            {/* Footer */}
-            <footer className="text-center animate-fade-in">
-              <div className="glass-card p-6 max-w-md mx-auto">
-                <p className="text-dark-300 text-sm">
-                  built with{" "}
-                  <span className="text-blue-400 font-semibold">next.js</span>,{" "}
-                  <span className="text-cyan-400 font-semibold">
-                    tailwind css
-                  </span>
-                  , and the{" "}
-                  <span className="text-purple-400 font-semibold">
-                    last.fm api
-                  </span>
-                </p>
+                <BuiltBy className="sm:justify-end" />
               </div>
             </footer>
           </div>

@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getWeeklyTops } from "@/lib/lastfm";
 
-/** Legacy endpoint — same payload as /api/top-this-week */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -12,10 +11,15 @@ export default async function handler(
 
   try {
     const payload = await getWeeklyTops();
+    console.log("/api/top-this-week success", {
+      artists: payload.artists.length,
+      albums: payload.albums.length,
+      tracks: payload.tracks.length,
+    });
     res.status(200).json(payload);
   } catch (error) {
     const err = error as any;
-    console.error("/api/artists (legacy) error", {
+    console.error("/api/top-this-week error", {
       message: err?.message,
       stack: err?.stack,
     });
