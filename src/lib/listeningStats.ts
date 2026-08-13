@@ -1,4 +1,5 @@
 import type { Track, UserInfo, WeeklyTops } from "./schemas";
+import type { ChartPeriod } from "./period";
 
 export type WeekDepthLeader = {
   name: string;
@@ -11,7 +12,7 @@ export type WeekDepth = {
   totalPlays: number;
   /** plays per unique artist — higher = more replay / less browsing */
   playsPerArtist: number;
-  /** top artists by plays this week */
+  /** top artists by plays in the selected period */
   leaders: WeekDepthLeader[];
   /** combined share of the leaders list */
   leadersSharePercent: number;
@@ -47,7 +48,8 @@ export type ListeningStats = {
   depth: WeekDepth | null;
   overlap: WeekOverlap | null;
   density: ListeningDensity | null;
-  weekLabel: string | null;
+  period: ChartPeriod;
+  periodLabel: string;
 };
 
 function startOfLocalDay(d: Date): number {

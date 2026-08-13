@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getWeeklyTops } from "@/lib/lastfm";
+import { getChartTops } from "@/lib/lastfm";
+import { parsePeriod } from "@/lib/period";
 
+/** Legacy endpoint — same payload as /api/top */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -10,19 +12,15 @@ export default async function handler(
   }
 
   try {
-    const payload = await getWeeklyTops();
-    console.log("/api/top-this-week success", {
-      artists: payload.artists.length,
-      albums: payload.albums.length,
-      tracks: payload.tracks.length,
-    });
+    const period = parsePeriod(req.query.period);
+    const payload = await getChartTops(period);
     res.status(200).json(payload);
   } catch (error) {
-    const err = error as any;
+    const err = error as { message?: string; stack?: string };
     console.error("/api/top-this-week error", {
       message: err?.message,
       stack: err?.stack,
     });
-    res.status(500).json({ message: "Failed to fetch top this week" });
+    res.status(500).json({ message: "Failed to fetch top charts" });
   }
 }

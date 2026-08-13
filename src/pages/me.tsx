@@ -1,19 +1,30 @@
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useState } from "react";
 import { getListeningStats, ListeningStats } from "@/lib/lastfm";
 import EarwormLogo from "@/components/EarwormLogo";
 import BuiltBy from "@/components/BuiltBy";
+import PeriodControl from "@/components/PeriodControl";
 import MetaTags from "@/components/MetaTags";
 import EmptyState from "@/components/EmptyState";
+import { MePeriodSkeleton } from "@/components/Skeleton";
 import { formatNumber } from "@/lib/dateUtils";
+import {
+  parsePeriod,
+  periodControlLabel,
+  periodTitleSuffix,
+} from "@/lib/period";
 
 type StatsPageProps = {
   stats: ListeningStats;
 };
 
-export const getServerSideProps: GetServerSideProps<StatsPageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<StatsPageProps> = async (
+  context
+) => {
+  const period = parsePeriod(context.query.period);
   try {
-    const stats = await getListeningStats();
+    const stats = await getListeningStats(period);
     return { props: { stats } };
   } catch (error) {
     console.error("SSR Error (me):", error);
@@ -26,7 +37,8 @@ export const getServerSideProps: GetServerSideProps<StatsPageProps> = async () =
           depth: null,
           overlap: null,
           density: null,
-          weekLabel: null,
+          period,
+          periodLabel: periodControlLabel(period),
         },
       },
     };
@@ -84,8 +96,14 @@ function registeredLabel(unix: number): string {
 }
 
 export default function StatsPage({ stats }: StatsPageProps) {
-  const { profile, accountAgeLabel, depth, overlap, density, weekLabel } =
-    stats;
+  const {
+    profile,
+    accountAgeLabel,
+    depth,
+    overlap,
+    density,
+    period,
+  } = stats;
 
   const hasAnything =
     Boolean(profile) ||
@@ -93,17 +111,20 @@ export default function StatsPage({ stats }: StatsPageProps) {
     Boolean(overlap) ||
     Boolean(density);
 
+  const rangeLabel = periodTitleSuffix(period);
+  const [periodPending, setPeriodPending] = useState(false);
+
   return (
     <>
       <MetaTags
         title="the numbers"
-        description="how the week stacked up — and how long i've been at this."
-        keywords="earworms, listening stats, scrobbles, music stats, weekly chart"
+        description="how things stacked up — and how long i've been at this."
+        keywords="earworms, listening stats, scrobbles, music stats"
         ogTitle="the numbers | earworms"
-        ogDescription="how the week stacked up — and how long i've been at this."
+        ogDescription="how things stacked up — and how long i've been at this."
         ogUrl="/me"
         twitterTitle="the numbers | earworms"
-        twitterDescription="how the week stacked up — and how long i've been at this."
+        twitterDescription="how things stacked up — and how long i've been at this."
       />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
@@ -144,10 +165,10 @@ export default function StatsPage({ stats }: StatsPageProps) {
                     latest tracks
                   </Link>
                   <Link
-                    href="/top-this-week"
+                    href="/top"
                     className="inline-flex items-center gap-1.5 text-dark-300 hover:text-pink-300 transition-colors group"
                   >
-                    top this week
+                    top
                     <span
                       aria-hidden="true"
                       className="transition-transform duration-200 group-hover:translate-x-0.5"
@@ -160,16 +181,17 @@ export default function StatsPage({ stats }: StatsPageProps) {
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
                 the numbers
               </h2>
-              <p className="text-dark-400 text-sm sm:text-base">
-                how the week stacked up — and how long i&apos;ve been at this.
+              <p className="text-dark-400 text-sm sm:text-base mb-4">
+                how things stacked up — and how long i&apos;ve been at this.
               </p>
-              {weekLabel ? (
-                <p className="text-xs text-dark-500 mt-2">
-                  rolling 7-day chart · {weekLabel}
-                </p>
-              ) : null}
+              <PeriodControl
+                period={period}
+                pathname="/me"
+                onPendingChange={setPeriodPending}
+              />
             </header>
 
+            <div aria-busy={periodPending}>
             {!hasAnything ? (
               <EmptyState
                 title="no stats yet"
@@ -177,33 +199,12 @@ export default function StatsPage({ stats }: StatsPageProps) {
               />
             ) : (
               <div className="space-y-10 sm:space-y-12 animate-slide-up">
+                {periodPending ? (
+                  <MePeriodSkeleton />
+                ) : (
                 <section>
                   <h3 className="text-sm uppercase tracking-[0.18em] text-dark-400 mb-4 sm:mb-5">
-                    lifetime
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <StatCard
-                      label="scrobbles"
-                      value={
-                        profile ? formatNumber(profile.playcount) : "—"
-                      }
-                      hint="everything last.fm has counted so far"
-                    />
-                    <StatCard
-                      label="listening for"
-                      value={accountAgeLabel ?? "—"}
-                      hint={
-                        profile?.registeredUnix
-                          ? `since ${registeredLabel(profile.registeredUnix)}`
-                          : undefined
-                      }
-                    />
-                  </div>
-                </section>
-
-                <section>
-                  <h3 className="text-sm uppercase tracking-[0.18em] text-dark-400 mb-4 sm:mb-5">
-                    this week
+                    {rangeLabel}
                   </h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                     {depth ? (
@@ -310,6 +311,9 @@ export default function StatsPage({ stats }: StatsPageProps) {
                         <p className="text-[10px] uppercase tracking-[0.2em] text-pink-300/80 mb-1">
                           earworms
                         </p>
+                        <p className="text-xs text-dark-500 mb-4">
+                          on more than one chart
+                        </p>
                         <ul className="space-y-3">
                           {overlap.items.map((hit) => {
                             const pieces = [
@@ -337,10 +341,35 @@ export default function StatsPage({ stats }: StatsPageProps) {
                           earworms
                         </p>
                         <p className="text-sm text-dark-300">
-                          nothing stuck across charts this week.
+                          nothing stuck across charts for this window.
                         </p>
                       </div>
                     )}
+                  </div>
+                </section>
+                )}
+
+                <section>
+                  <h3 className="text-sm uppercase tracking-[0.18em] text-dark-400 mb-4 sm:mb-5">
+                    lifetime
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <StatCard
+                      label="scrobbles"
+                      value={
+                        profile ? formatNumber(profile.playcount) : "—"
+                      }
+                      hint="everything last.fm has counted so far"
+                    />
+                    <StatCard
+                      label="listening for"
+                      value={accountAgeLabel ?? "—"}
+                      hint={
+                        profile?.registeredUnix
+                          ? `since ${registeredLabel(profile.registeredUnix)}`
+                          : undefined
+                      }
+                    />
                   </div>
                 </section>
 
@@ -348,6 +377,9 @@ export default function StatsPage({ stats }: StatsPageProps) {
                   <h3 className="text-sm uppercase tracking-[0.18em] text-dark-400 mb-4 sm:mb-5">
                     density
                   </h3>
+                  <p className="text-xs text-dark-500 -mt-2 mb-4">
+                    always from recent scrobbles — not the chart window above
+                  </p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <StatCard
                       label="today"
@@ -382,6 +414,7 @@ export default function StatsPage({ stats }: StatsPageProps) {
                 </section>
               </div>
             )}
+            </div>
 
             <footer className="mt-20 sm:mt-24 lg:mt-32 pt-10 border-t border-white/10 animate-fade-in">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -393,10 +426,10 @@ export default function StatsPage({ stats }: StatsPageProps) {
                     ← latest tracks
                   </Link>
                   <Link
-                    href="/top-this-week"
+                    href="/top"
                     className="text-dark-300 hover:text-pink-300 transition-colors"
                   >
-                    top this week →
+                    top →
                   </Link>
                 </div>
                 <BuiltBy className="sm:justify-end" />

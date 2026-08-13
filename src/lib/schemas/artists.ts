@@ -10,6 +10,7 @@ export const topArtistSchema = z.object({
   url: z.string().url(),
   streamable: z.union([z.string(), z.object({ "#text": z.string() })]).optional(),
   image: z.array(trackImageSchema).default([]),
+  "@attr": z.object({ rank: z.string() }).optional(),
 });
 
 export const topArtistsSchema = z.object({
@@ -165,6 +166,7 @@ export type WeeklyTops = {
   artists: WeeklyArtistView[];
   albums: TopAlbumView[];
   tracks: TopTrackView[];
-  meta: WeeklyChartMeta;
+  meta: WeeklyChartMeta | null;
+  period: string;
 };
 

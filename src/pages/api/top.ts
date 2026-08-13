@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getChartTops } from "@/lib/lastfm";
+import { parsePeriod } from "@/lib/period";
 
-/** Legacy endpoint — same payload as /api/top (default 7-day period) */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -11,11 +11,18 @@ export default async function handler(
   }
 
   try {
-    const payload = await getChartTops();
+    const period = parsePeriod(req.query.period);
+    const payload = await getChartTops(period);
+    console.log("/api/top success", {
+      period,
+      artists: payload.artists.length,
+      albums: payload.albums.length,
+      tracks: payload.tracks.length,
+    });
     res.status(200).json(payload);
   } catch (error) {
-    const err = error as { message?: string; stack?: string };
-    console.error("/api/artists (legacy) error", {
+    const err = error as any;
+    console.error("/api/top error", {
       message: err?.message,
       stack: err?.stack,
     });

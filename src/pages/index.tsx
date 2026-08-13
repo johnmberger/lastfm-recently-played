@@ -105,10 +105,10 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
                   </div>
                   <nav className="hidden md:flex items-center gap-4 shrink-0 mt-2 lg:mt-3 text-sm">
                     <Link
-                      href="/top-this-week"
+                      href="/top"
                       className="inline-flex items-center gap-1.5 text-dark-300 hover:text-pink-300 transition-colors group"
                     >
-                      top this week
+                      top
                       <span
                         aria-hidden="true"
                         className="transition-transform duration-200 group-hover:translate-x-0.5"
@@ -195,14 +195,13 @@ export default function Home({ tracks: initialTracks }: { tracks: Track[] }) {
                       charts
                     </p>
                     <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-                      top this week
+                      top
                     </h2>
                     <p className="text-dark-300 text-sm sm:text-base mb-4">
-                      artists, albums, and tracks that got stuck on repeat this
-                      week
+                      artists, albums, and tracks that got stuck on repeat
                     </p>
                     <Link
-                      href="/top-this-week"
+                      href="/top"
                       className="inline-flex items-center gap-2 text-pink-300 hover:text-pink-200 transition-colors font-semibold group"
                     >
                       see the full rankings

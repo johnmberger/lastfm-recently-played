@@ -27,7 +27,11 @@ import {
   formatAccountAge,
 } from "./listeningStats";
 import type { ListeningStats } from "./listeningStats";
-import { formatWeekRange } from "./dateUtils";
+import {
+  ChartPeriod,
+  DEFAULT_CHART_PERIOD,
+  periodControlLabel,
+} from "./period";
 
 export type {
   Track,
@@ -43,6 +47,7 @@ export type {
 };
 
 export type { ListeningStats };
+export type { ChartPeriod };
 
 /** Last.fm intentionally returns this star for stripped artist artwork */
 const LASTFM_IMAGE_PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
@@ -210,7 +215,7 @@ export async function getTopArtists({
   period = "7day",
   limit = 50,
 }: {
-  period?: "7day" | "1month" | "3month" | "6month" | "12month" | "overall";
+  period?: ChartPeriod;
   limit?: number;
 } = {}): Promise<TopArtist[]> {
   const { API_KEY, USERNAME, API_URL } = getCredentials();
@@ -268,7 +273,7 @@ export async function getTopAlbums({
   period = "7day",
   limit = 100,
 }: {
-  period?: "7day" | "1month" | "3month" | "6month" | "12month" | "overall";
+  period?: ChartPeriod;
   limit?: number;
 } = {}): Promise<TopAlbum[]> {
   const { API_KEY, USERNAME, API_URL } = getCredentials();
@@ -326,7 +331,7 @@ export async function getTopTracks({
   period = "7day",
   limit = 50,
 }: {
-  period?: "7day" | "1month" | "3month" | "6month" | "12month" | "overall";
+  period?: ChartPeriod;
   limit?: number;
 } = {}): Promise<TopTrack[]> {
   const { API_KEY, USERNAME, API_URL } = getCredentials();
@@ -412,6 +417,22 @@ export function mergeWeeklyArtistsWithImages(
   }));
 }
 
+function toArtistViews(
+  artists: TopArtist[],
+  imageByName: Map<string, string>
+): WeeklyArtistView[] {
+  return artists.map((artist, index) => ({
+    name: artist.name,
+    playcount: artist.playcount,
+    url: artist.url,
+    rank: artist["@attr"]?.rank || String(index + 1),
+    image:
+      imageByName.get(artist.name.toLowerCase()) ||
+      pickImageUrl(artist.image) ||
+      "",
+  }));
+}
+
 function toAlbumViews(albums: TopAlbum[]): TopAlbumView[] {
   return albums.map((album, index) => ({
     name: album.name,
@@ -442,24 +463,33 @@ function toTrackViews(
   });
 }
 
-/** Weekly chart ranks/plays + album covers from top-albums(7day). */
+/** @deprecated Prefer getChartTops */
 export async function getEnrichedWeeklyArtists(): Promise<EnrichedWeeklyArtists> {
-  const tops = await getWeeklyTops();
-  return { artists: tops.artists, meta: tops.meta };
+  const tops = await getChartTops(DEFAULT_CHART_PERIOD);
+  return { artists: tops.artists, meta: tops.meta ?? { user: "", from: "", to: "" } };
+}
+
+/** @deprecated Prefer getChartTops */
+export async function getWeeklyTops(): Promise<WeeklyTops> {
+  return getChartTops(DEFAULT_CHART_PERIOD);
 }
 
 /**
- * This week's tops: artists (weekly chart) + albums + tracks.
- * 3 Last.fm calls in parallel.
+ * Period-aware tops: artists + albums + tracks via Last.fm period charts.
  */
-export async function getWeeklyTops(): Promise<WeeklyTops> {
-  const [weekly, topAlbums, topTracks] = await Promise.all([
-    getWeeklyArtistChart(),
-    getTopAlbums({ period: "7day", limit: 100 }).catch((error) => {
+export async function getChartTops(
+  period: ChartPeriod = DEFAULT_CHART_PERIOD
+): Promise<WeeklyTops> {
+  const [topArtists, topAlbums, topTracks] = await Promise.all([
+    getTopArtists({ period, limit: 50 }).catch((error) => {
+      console.error("Top artists fetch failed", error);
+      return [] as TopArtist[];
+    }),
+    getTopAlbums({ period, limit: 100 }).catch((error) => {
       console.error("Top albums fetch failed", error);
       return [] as TopAlbum[];
     }),
-    getTopTracks({ period: "7day", limit: 50 }).catch((error) => {
+    getTopTracks({ period, limit: 50 }).catch((error) => {
       console.error("Top tracks fetch failed", error);
       return [] as TopTrack[];
     }),
@@ -468,10 +498,11 @@ export async function getWeeklyTops(): Promise<WeeklyTops> {
   const imageByName = buildArtistImageMapFromAlbums(topAlbums);
 
   return {
-    artists: mergeWeeklyArtistsWithImages(weekly.artists, imageByName),
+    artists: toArtistViews(topArtists, imageByName),
     albums: toAlbumViews(topAlbums),
     tracks: toTrackViews(topTracks, imageByName),
-    meta: weekly.meta,
+    meta: null,
+    period,
   };
 }
 
@@ -550,15 +581,17 @@ export async function getTopTags(limit = 12): Promise<UserTag[]> {
   }));
 }
 
-/** Profile + week flavor stats for the /me page. */
-export async function getListeningStats(): Promise<ListeningStats> {
+/** Profile + period flavor stats for the /me page. */
+export async function getListeningStats(
+  period: ChartPeriod = DEFAULT_CHART_PERIOD
+): Promise<ListeningStats> {
   const [profile, tops, recent] = await Promise.all([
     getUserInfo().catch((error) => {
       console.error("User info fetch failed", error);
       return null;
     }),
-    getWeeklyTops().catch((error) => {
-      console.error("Weekly tops fetch failed", error);
+    getChartTops(period).catch((error) => {
+      console.error("Chart tops fetch failed", error);
       return null;
     }),
     getRecentTracks(200).catch((error) => {
@@ -579,8 +612,7 @@ export async function getListeningStats(): Promise<ListeningStats> {
     depth: tops ? computeWeekDepth(tops.artists) : null,
     overlap: tops ? computeWeekOverlap(tops) : null,
     density: computeListeningDensity(recent),
-    weekLabel: tops?.meta
-      ? formatWeekRange(tops.meta.from, tops.meta.to)
-      : null,
+    period,
+    periodLabel: periodControlLabel(period),
   };
 }

@@ -1,10 +1,10 @@
 import { GetServerSideProps } from "next";
 
-/** Old /artists route — keep bookmarks working */
+/** Permanent redirect from the old /artists path. */
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: "/top-this-week",
+      destination: "/top",
       permanent: true,
     },
   };
