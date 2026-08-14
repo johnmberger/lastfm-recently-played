@@ -13,13 +13,7 @@ export default function RecentTracksList({ tracks }: { tracks: Track[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
       {tracks.map((track, index) => (
-        <div
-          key={trackKey(track, index)}
-          className="animate-scale-in"
-          style={{ animationDelay: `${Math.min(index, 8) * 80}ms` }}
-        >
-          <TrackCard track={track} />
-        </div>
+        <TrackCard key={trackKey(track, index)} track={track} />
       ))}
     </div>
   );

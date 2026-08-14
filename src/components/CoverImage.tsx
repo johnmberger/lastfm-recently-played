@@ -9,6 +9,9 @@ type CoverImageProps = {
   alt?: string;
 };
 
+/** Survives page remounts so returning to a grid doesn't re-shimmer. */
+const loadedSrcs = new Set<string>();
+
 /** Cover/artist art with shimmer while loading and letter fallback. */
 export default function CoverImage({
   name,
@@ -18,7 +21,9 @@ export default function CoverImage({
   alt = "",
 }: CoverImageProps) {
   const [failed, setFailed] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(() =>
+    Boolean(image) && loadedSrcs.has(image)
+  );
   const isPlaceholder = !image || image.includes(LASTFM_IMAGE_PLACEHOLDER);
   const showFallback = isPlaceholder || failed;
   const initial = name.trim().charAt(0).toUpperCase() || "?";
@@ -47,10 +52,15 @@ export default function CoverImage({
       <img
         src={image}
         alt={alt}
-        className={`w-full h-full object-cover transition-opacity duration-500 ${
-          loaded ? "opacity-100" : "opacity-0"
+        className={`w-full h-full object-cover ${
+          loaded
+            ? "opacity-100"
+            : "opacity-0 transition-opacity duration-500"
         }`}
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          loadedSrcs.add(image);
+          setLoaded(true);
+        }}
         onError={() => setFailed(true)}
         loading="lazy"
       />

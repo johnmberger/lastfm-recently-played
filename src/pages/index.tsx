@@ -8,7 +8,7 @@ import {
   computeListeningDensity,
   type ListeningDensity,
 } from "@/lib/listeningStats";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import MetaTags from "@/components/MetaTags";
@@ -38,7 +38,12 @@ function tracksSignature(tracks: Track[]): string {
     .join("\n");
 }
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+function densitySignature(density: ListeningDensity | null): string {
+  if (!density) return "";
+  return `${density.today}|${density.yesterday}|${density.recentDailyAvg}|${density.sampleDays}|${density.samplePlays}`;
+}
+
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
     const recent = await getRecentTracks(SAMPLE_LIMIT);
     return {
@@ -46,14 +51,16 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
         tracks: recent.slice(0, DISPLAY_LIMIT),
         density: computeListeningDensity(recent),
       },
+      revalidate: 30,
     };
   } catch (error) {
-    console.error("SSR Error (index):", error);
+    console.error("SSG Error (index):", error);
     return {
       props: {
         tracks: [],
         density: null,
       },
+      revalidate: 30,
     };
   }
 };
@@ -66,52 +73,76 @@ export default function Home({
   const [tracks, setTracks] = useState(initialTracks);
   const [density, setDensity] = useState(initialDensity);
   const [tracksSig, setTracksSig] = useState(propsSig);
+  const [densitySig, setDensitySig] = useState(() =>
+    densitySignature(initialDensity)
+  );
   const [seenPropsSig, setSeenPropsSig] = useState(propsSig);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(getCurrentDate());
   const refreshingRef = useRef(false);
 
-  // Sync from new SSR props (client navigation back to home)
+  // Sync when ISR / navigation provides a new props snapshot
   if (seenPropsSig !== propsSig) {
     setSeenPropsSig(propsSig);
     setTracks(initialTracks);
     setDensity(initialDensity);
     setTracksSig(propsSig);
+    setDensitySig(densitySignature(initialDensity));
   }
 
-  const handleManualRefresh = useCallback(async () => {
-    if (refreshingRef.current) return;
-    refreshingRef.current = true;
-    setIsRefreshing(true);
-    try {
-      const response = await fetch("/api/tracks");
-      if (response.ok) {
-        const payload = (await response.json()) as TracksPayload;
-        const nextSig = tracksSignature(payload.tracks);
-        if (nextSig !== tracksSig) {
-          setTracksSig(nextSig);
-          setLastUpdated(getCurrentDate());
-        }
-        setTracks(payload.tracks);
-        setDensity(payload.density);
-      }
-    } catch (error) {
-      console.error("Failed to refresh tracks:", error);
-    } finally {
-      refreshingRef.current = false;
-      setIsRefreshing(false);
-    }
-  }, [tracksSig]);
+  const applyPayload = useCallback(
+    (payload: TracksPayload) => {
+      const nextTracksSig = tracksSignature(payload.tracks);
+      const nextDensitySig = densitySignature(payload.density);
+      let changed = false;
 
-  // Auto-refresh every 30s while the tab is visible
+      if (nextTracksSig !== tracksSig) {
+        setTracksSig(nextTracksSig);
+        setTracks(payload.tracks);
+        changed = true;
+      }
+      if (nextDensitySig !== densitySig) {
+        setDensitySig(nextDensitySig);
+        setDensity(payload.density);
+        changed = true;
+      }
+      if (changed) setLastUpdated(getCurrentDate());
+    },
+    [tracksSig, densitySig]
+  );
+
+  const refresh = useCallback(
+    async (opts: { silent: boolean }) => {
+      if (refreshingRef.current) return;
+      refreshingRef.current = true;
+      if (!opts.silent) setIsRefreshing(true);
+      try {
+        const response = await fetch("/api/tracks");
+        if (response.ok) {
+          applyPayload((await response.json()) as TracksPayload);
+        }
+      } catch (error) {
+        console.error("Failed to refresh tracks:", error);
+      } finally {
+        refreshingRef.current = false;
+        if (!opts.silent) setIsRefreshing(false);
+      }
+    },
+    [applyPayload]
+  );
+
+  const handleManualRefresh = useCallback(() => {
+    void refresh({ silent: false });
+  }, [refresh]);
+
   useEffect(() => {
     const tick = () => {
       if (document.visibilityState === "hidden") return;
-      void handleManualRefresh();
+      void refresh({ silent: true });
     };
     const interval = setInterval(tick, 30000);
     return () => clearInterval(interval);
-  }, [handleManualRefresh]);
+  }, [refresh]);
 
   return (
     <>
@@ -231,7 +262,7 @@ export default function Home({
           </div>
         }
       >
-        <section className="animate-slide-up">
+        <section>
           {tracks.length === 0 ? (
             <EmptyState
               title="no recent tracks"

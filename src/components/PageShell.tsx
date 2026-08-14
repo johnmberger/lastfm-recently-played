@@ -117,7 +117,7 @@ export default function PageShell({
 
       <main className="relative z-10">
         <div className={contentWidth}>
-          <header className="mb-10 sm:mb-12 animate-fade-in">
+          <header className="mb-10 sm:mb-12">
             <div className="flex items-start justify-between gap-4 mb-6">
               <Brand asLink={brandLinksHome} />
               <SiteNav items={nav} />
@@ -128,7 +128,7 @@ export default function PageShell({
           {children}
 
           {footer ? (
-            <footer className="mt-20 sm:mt-24 lg:mt-32 pt-10 border-t border-white/10 animate-fade-in">
+            <footer className="mt-20 sm:mt-24 lg:mt-32 pt-10 border-t border-white/10">
               {footer}
             </footer>
           ) : null}
