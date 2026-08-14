@@ -8,17 +8,17 @@ interface EmptyStateProps {
 }
 
 export default function EmptyState({
-  title = "No data available",
-  message = "We couldn't fetch any results right now. Please try again later.",
+  title = "nothing here yet",
+  message = "couldn't fetch results right now. try again in a bit.",
   actionLabel,
   onAction,
 }: EmptyStateProps) {
   return (
-    <div className="glass-card p-8 max-w-xl mx-auto text-center animate-fade-in">
+    <div className="panel p-8 max-w-xl mx-auto text-center animate-fade-in">
       <div className="flex justify-center mb-6">
         <Image
           src="/music-note.svg"
-          alt="Empty"
+          alt=""
           width={72}
           height={72}
           className="opacity-60"
@@ -26,14 +26,14 @@ export default function EmptyState({
       </div>
       <h2 className="text-2xl font-semibold text-white mb-2">{title}</h2>
       <p className="text-dark-300 mb-6">{message}</p>
-      {actionLabel && onAction && (
+      {actionLabel && onAction ? (
         <button
           onClick={onAction}
-          className="px-5 py-2 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-colors"
+          className="px-5 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-400 transition-colors"
         >
           {actionLabel}
         </button>
-      )}
+      ) : null}
     </div>
   );
 }

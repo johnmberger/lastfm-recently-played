@@ -7,10 +7,10 @@ import {
 } from "@/lib/period";
 
 /**
- * Tracks in-flight period navigations for /top and /me.
+ * Tracks in-flight duration navigations for /top and /me.
  * Use displayPeriod for optimistic UI while SSR catches up.
  */
-export function usePeriodPending(
+export function useDurationPending(
   pathname: string,
   period: ChartPeriod
 ): {
@@ -21,11 +21,10 @@ export function usePeriodPending(
   const router = useRouter();
   const [pendingPeriod, setPendingPeriod] = useState<ChartPeriod | null>(null);
 
-  useEffect(() => {
-    if (pendingPeriod && period === pendingPeriod) {
-      setPendingPeriod(null);
-    }
-  }, [period, pendingPeriod]);
+  // Clear optimistic pending once the page period catches up
+  if (pendingPeriod !== null && pendingPeriod === period) {
+    setPendingPeriod(null);
+  }
 
   useEffect(() => {
     const clear = () => setPendingPeriod(null);

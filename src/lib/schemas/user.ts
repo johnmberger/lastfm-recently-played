@@ -16,23 +16,6 @@ export const userInfoSchema = z.object({
   }),
 });
 
-export const userTagSchema = z.object({
-  name: z.string(),
-  count: z.string(),
-  url: z.string().optional().default(""),
-});
-
-export const userTopTagsSchema = z.object({
-  toptags: z.object({
-    tag: z.union([z.array(userTagSchema), userTagSchema]).optional().default([]),
-    "@attr": z
-      .object({
-        user: z.string().optional(),
-      })
-      .optional(),
-  }),
-});
-
 export type UserInfo = {
   name: string;
   playcount: number;
@@ -40,11 +23,4 @@ export type UserInfo = {
   url: string;
 };
 
-export type UserTag = {
-  name: string;
-  count: number;
-  url: string;
-};
-
 export type UserInfoResponse = z.infer<typeof userInfoSchema>;
-export type UserTopTagsResponse = z.infer<typeof userTopTagsSchema>;

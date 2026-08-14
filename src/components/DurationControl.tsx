@@ -1,36 +1,20 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import {
-  ChartPeriod,
-  PERIOD_OPTIONS,
-} from "@/lib/period";
-import { usePeriodPending } from "@/hooks/usePeriodPending";
+import { PERIOD_OPTIONS } from "@/lib/period";
+import { useDurationPendingContext } from "@/components/DurationPending";
 
-type PeriodControlProps = {
-  period: ChartPeriod;
-  pathname: string;
+type DurationControlProps = {
   className?: string;
-  onPendingChange?: (pending: boolean) => void;
 };
 
 type PillBox = { left: number; width: number };
 
-export default function PeriodControl({
-  period,
-  pathname,
-  className = "",
-  onPendingChange,
-}: PeriodControlProps) {
-  const { isPending, displayPeriod, selectPeriod } = usePeriodPending(
-    pathname,
-    period
-  );
+/** Segmented control for chart duration (`?period=`). Requires DurationPendingProvider. */
+export default function DurationControl({ className = "" }: DurationControlProps) {
+  const { isPending, displayPeriod, selectPeriod } =
+    useDurationPendingContext();
   const railRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [pill, setPill] = useState<PillBox | null>(null);
-
-  useEffect(() => {
-    onPendingChange?.(isPending);
-  }, [isPending, onPendingChange]);
 
   const updatePill = () => {
     const rail = railRef.current;
@@ -47,6 +31,7 @@ export default function PeriodControl({
 
   useLayoutEffect(() => {
     updatePill();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- measure after displayPeriod changes
   }, [displayPeriod]);
 
   useEffect(() => {
@@ -65,6 +50,7 @@ export default function PeriodControl({
       window.removeEventListener("resize", onResize);
       window.clearTimeout(t);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pill + scroll tied to displayPeriod
   }, [displayPeriod]);
 
   return (
@@ -73,17 +59,17 @@ export default function PeriodControl({
         <div className="overflow-x-auto scrollbar-hide px-4 sm:px-0">
           <div
             ref={railRef}
-            className={`relative flex min-w-max sm:min-w-0 sm:w-full gap-0.5 rounded-2xl border border-white/15 bg-white/[0.07] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-2xl transition-opacity ${
+            className={`relative flex min-w-max sm:min-w-0 sm:w-full gap-0.5 rounded-2xl border border-white/15 bg-white/[0.07] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] md:backdrop-blur-2xl transition-opacity ${
               isPending ? "opacity-90" : ""
             }`}
             role="navigation"
-            aria-label="chart period"
+            aria-label="chart duration"
             aria-busy={isPending}
           >
             {pill ? (
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute top-1 bottom-1 rounded-xl border border-white/40 bg-gradient-to-b from-white/40 via-white/18 to-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.55)] backdrop-blur-md transition-[left,width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                className="pointer-events-none absolute top-1 bottom-1 rounded-xl border border-white/40 bg-gradient-to-b from-white/40 via-white/18 to-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.55)] md:backdrop-blur-md transition-[left,width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 style={{ left: pill.left, width: pill.width }}
               />
             ) : null}

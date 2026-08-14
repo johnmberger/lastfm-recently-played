@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getChartTops } from "@/lib/lastfm";
 import { parsePeriod } from "@/lib/period";
+import { logApiError } from "@/lib/apiError";
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,19 +14,9 @@ export default async function handler(
   try {
     const period = parsePeriod(req.query.period);
     const payload = await getChartTops(period);
-    console.log("/api/top success", {
-      period,
-      artists: payload.artists.length,
-      albums: payload.albums.length,
-      tracks: payload.tracks.length,
-    });
     res.status(200).json(payload);
   } catch (error) {
-    const err = error as any;
-    console.error("/api/top error", {
-      message: err?.message,
-      stack: err?.stack,
-    });
+    logApiError("/api/top", error);
     res.status(500).json({ message: "Failed to fetch top charts" });
   }
 }

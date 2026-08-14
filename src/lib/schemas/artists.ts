@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { ChartPeriod } from "../period";
 import { trackImageSchema } from "./base";
 
 // Top Artists schemas — Last.fm sometimes omits/empties fields
@@ -26,51 +27,16 @@ export const topArtistsSchema = z.object({
   }),
 });
 
-// Weekly Artists schemas
-export const weeklyArtistSchema = z.object({
-  name: z.string(),
-  playcount: z.string(),
-  mbid: z.string().optional().default(""),
-  url: z.string().url(),
-  "@attr": z.object({
-    rank: z.string(),
-  }),
-});
-
-export const weeklyArtistsSchema = z.object({
-  weeklyartistchart: z.object({
-    artist: z.union([z.array(weeklyArtistSchema), weeklyArtistSchema]),
-    "@attr": z.object({
-      user: z.string(),
-      from: z.string(),
-      to: z.string(),
-    }),
-  }),
-});
-
 // TypeScript Types
 export type TopArtist = z.infer<typeof topArtistSchema>;
 export type TopArtistsResponse = z.infer<typeof topArtistsSchema>;
-export type WeeklyArtist = z.infer<typeof weeklyArtistSchema>;
-export type WeeklyArtistsResponse = z.infer<typeof weeklyArtistsSchema>;
 
-export type WeeklyArtistView = {
+export type ChartArtistView = {
   name: string;
   playcount: string;
   url: string;
   rank: string;
   image: string;
-};
-
-export type WeeklyChartMeta = {
-  user: string;
-  from: string;
-  to: string;
-};
-
-export type EnrichedWeeklyArtists = {
-  artists: WeeklyArtistView[];
-  meta: WeeklyChartMeta;
 };
 
 /** Top albums — used for real cover art (artist images are placeholders in the API) */
@@ -162,11 +128,9 @@ export type TopTrackView = {
   image: string;
 };
 
-export type WeeklyTops = {
-  artists: WeeklyArtistView[];
+export type ChartTops = {
+  artists: ChartArtistView[];
   albums: TopAlbumView[];
   tracks: TopTrackView[];
-  meta: WeeklyChartMeta | null;
-  period: string;
+  period: ChartPeriod;
 };
-

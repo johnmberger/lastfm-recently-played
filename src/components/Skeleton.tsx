@@ -15,7 +15,7 @@ export function Skeleton({ className = "" }: SkeletonProps) {
 function SkeletonCard({ className = "" }: SkeletonProps) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md px-4 py-5 sm:px-5 sm:py-6 ${className}`}
+      className={`panel px-4 py-5 sm:px-5 sm:py-6 ${className}`}
     >
       <Skeleton className="h-2.5 w-16 mb-4" />
       <Skeleton className="h-8 w-24 mb-2" />
@@ -43,7 +43,7 @@ export function MePeriodSkeleton() {
     <section aria-hidden="true">
       <Skeleton className="h-3 w-24 mb-4 sm:mb-5" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md px-4 py-5 sm:px-5 sm:py-6">
+        <div className="panel px-4 py-5 sm:px-5 sm:py-6">
           <Skeleton className="h-2.5 w-14 mb-4" />
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
@@ -80,7 +80,7 @@ export function MePeriodSkeleton() {
           </div>
           <Skeleton className="h-3 w-3/4" />
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md px-4 py-5 sm:px-5 sm:py-6">
+        <div className="panel px-4 py-5 sm:px-5 sm:py-6">
           <Skeleton className="h-2.5 w-20 mb-1" />
           <Skeleton className="h-3 w-32 mb-4" />
           <div className="space-y-3">
@@ -116,7 +116,7 @@ export function TopPeriodSkeleton() {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md px-3 py-4 sm:px-4 sm:py-5 flex flex-col items-center"
+              className="panel px-3 py-4 sm:px-4 sm:py-5 flex flex-col items-center"
             >
               <Skeleton className="w-40 h-40 sm:w-44 sm:h-44 rounded-xl mb-3" />
               <Skeleton className="h-2.5 w-16 mb-2" />

@@ -22,8 +22,8 @@ export function parsePeriod(value: unknown): ChartPeriod {
   return isChartPeriod(value) ? value : DEFAULT_CHART_PERIOD;
 }
 
-/** Short control label (segmented control) */
-export function periodControlShortLabel(period: ChartPeriod): string {
+/** Short control label (segmented duration control) */
+export function durationControlShortLabel(period: ChartPeriod): string {
   switch (period) {
     case "7day":
       return "7d";
@@ -41,7 +41,7 @@ export function periodControlShortLabel(period: ChartPeriod): string {
 }
 
 /** Readable label for copy / hints */
-export function periodControlLabel(period: ChartPeriod): string {
+export function durationControlLabel(period: ChartPeriod): string {
   switch (period) {
     case "7day":
       return "7 days";
@@ -82,6 +82,6 @@ export const PERIOD_OPTIONS: {
   shortLabel: string;
 }[] = CHART_PERIODS.map((value) => ({
   value,
-  label: periodControlLabel(value),
-  shortLabel: periodControlShortLabel(value),
+  label: durationControlLabel(value),
+  shortLabel: durationControlShortLabel(value),
 }));

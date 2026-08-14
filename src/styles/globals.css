@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,72 +8,80 @@
   }
 
   body {
-    font-family: "Inter", system-ui, sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    font-variation-settings: normal;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  * {
-    @apply border-gray-200;
+  ::selection {
+    background: rgba(168, 85, 247, 0.35);
+    color: white;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+  /* Shared stats / empty-state surface */
+  .panel {
+    @apply rounded-2xl border border-white/10 bg-white/[0.04] md:backdrop-blur-md;
   }
 
-  .glass-card-hover {
-    @apply hover:bg-white/10 hover:border-white/20 transition-all duration-300;
-  }
-
-  /* Apple Liquid Glass Cards */
-  .apple-glass-card {
-    @apply bg-white/[0.08] backdrop-blur-2xl border border-white/10 rounded-3xl;
+  /* Track grid cards — hover lift lives here (no JS hover state) */
+  .track-card {
+    @apply border border-white/10 rounded-3xl md:backdrop-blur-2xl;
+    @apply transition-all duration-700 ease-out;
     background: linear-gradient(
       135deg,
       rgba(255, 255, 255, 0.1) 0%,
       rgba(255, 255, 255, 0.05) 100%
     );
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.1),
       inset 0 -1px 0 rgba(255, 255, 255, 0.05);
   }
 
-  .apple-glass-hover {
-    @apply transform transition-all duration-700 ease-out;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.15) 0%,
-      rgba(255, 255, 255, 0.08) 100%
-    );
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 8px 16px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.1);
-    transform: translateY(-4px) scale(1.02);
+  @media (hover: hover) {
+    .track-card:hover {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 100%
+      );
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+      transform: translateY(-4px) scale(1.02);
+    }
   }
 
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent;
+  /* Now-playing EQ — one keyframe, staggered children */
+  .eq-bars {
+    @apply flex items-end gap-0.5 h-4;
   }
 
-  .gradient-border {
-    @apply relative before:absolute before:inset-0 before:rounded-2xl before:p-[1px] before:bg-gradient-to-r before:from-primary-500 before:to-accent-500 before:-z-10;
+  .eq-bars > span {
+    @apply w-0.5 bg-white rounded-full;
+    height: 1rem;
+    transform-origin: bottom;
+    animation: eq-bar 1.2s ease-in-out infinite;
   }
 
-  .card-hover {
-    @apply transform transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-1;
+  .eq-bars > span:nth-child(2) {
+    animation-duration: 1.4s;
+    animation-delay: -0.15s;
   }
 
-  .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  .eq-bars > span:nth-child(3) {
+    animation-duration: 1.6s;
+    animation-delay: -0.3s;
   }
 
-  .text-shadow-lg {
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  .eq-bars > span:nth-child(4) {
+    animation-duration: 1.3s;
+    animation-delay: -0.45s;
   }
 }
 
@@ -88,153 +95,42 @@
     display: none;
   }
 
-  .perspective-1000 {
-    perspective: 1000px;
+  .animate-cover-shimmer {
+    background: linear-gradient(
+      110deg,
+      rgba(255, 255, 255, 0.04) 25%,
+      rgba(255, 255, 255, 0.12) 37%,
+      rgba(255, 255, 255, 0.04) 63%
+    );
+    background-size: 200% 100%;
+    animation: cover-shimmer 1.4s ease-in-out infinite;
   }
 
-  .preserve-3d {
-    transform-style: preserve-3d;
-  }
-
-  .backface-hidden {
-    backface-visibility: hidden;
-  }
-
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-  }
-
-  .line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  .line-clamp-3 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+  /* Dense sine samples so the worm motion stays smooth */
+  .worm-wave-seg {
+    animation: worm-wave 1.6s linear infinite;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-/* EQ Bar Animations */
-@keyframes eq-bar-1 {
+@keyframes eq-bar {
   0%,
   100% {
-    height: 0.25rem;
-  }
-  25% {
-    height: 0.5rem;
+    transform: scaleY(0.3);
   }
   50% {
-    height: 0.75rem;
-  }
-  75% {
-    height: 0.5rem;
+    transform: scaleY(1);
   }
 }
 
-@keyframes eq-bar-2 {
-  0%,
+@keyframes cover-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
   100% {
-    height: 0.5rem;
-  }
-  20% {
-    height: 0.75rem;
-  }
-  40% {
-    height: 1rem;
-  }
-  60% {
-    height: 0.75rem;
-  }
-  80% {
-    height: 0.5rem;
+    background-position: -200% 0;
   }
 }
 
-@keyframes eq-bar-3 {
-  0%,
-  100% {
-    height: 0.75rem;
-  }
-  15% {
-    height: 1rem;
-  }
-  30% {
-    height: 1.25rem;
-  }
-  45% {
-    height: 1rem;
-  }
-  60% {
-    height: 0.75rem;
-  }
-  75% {
-    height: 1rem;
-  }
-  90% {
-    height: 0.75rem;
-  }
-}
-
-@keyframes eq-bar-4 {
-  0%,
-  100% {
-    height: 0.5rem;
-  }
-  30% {
-    height: 0.75rem;
-  }
-  50% {
-    height: 1rem;
-  }
-  70% {
-    height: 0.75rem;
-  }
-}
-
-.animate-eq-bar-1 {
-  animation: eq-bar-1 1.2s ease-in-out infinite;
-}
-
-.animate-eq-bar-2 {
-  animation: eq-bar-2 1.4s ease-in-out infinite;
-}
-
-.animate-eq-bar-3 {
-  animation: eq-bar-3 1.6s ease-in-out infinite;
-}
-
-.animate-eq-bar-4 {
-  animation: eq-bar-4 1.3s ease-in-out infinite;
-}
-
-/* Earworm sound-wave — dense sine samples so motion stays smooth (not a jagged W) */
 @keyframes worm-wave {
   0% {
     transform: translateY(0px);
@@ -313,57 +209,36 @@
   }
 }
 
-.worm-wave-seg {
-  animation: worm-wave 1.6s linear infinite;
-}
-
-@keyframes cover-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
+/* iOS Safari: animated blur orbs + continuous transforms cause paint flicker */
+@media (max-width: 767px) {
+  .animate-float {
+    animation: none !important;
   }
 }
 
-.animate-cover-shimmer {
-  background: linear-gradient(
-    110deg,
-    rgba(255, 255, 255, 0.04) 25%,
-    rgba(255, 255, 255, 0.12) 37%,
-    rgba(255, 255, 255, 0.04) 63%
-  );
-  background-size: 200% 100%;
-  animation: cover-shimmer 1.4s ease-in-out infinite;
-}
-
-/* Loading Screen Animations */
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.8);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(1.4);
-    opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-cover-shimmer,
+  .worm-wave-seg,
+  .eq-bars > span {
+    animation: none !important;
   }
 }
 
-.animate-pulse-ring {
-  animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Selection styles */
-::selection {
-  background: rgba(14, 165, 233, 0.3);
-  color: white;
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
-::-moz-selection {
-  background: rgba(14, 165, 233, 0.3);
-  color: white;
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }

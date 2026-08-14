@@ -1,24 +1,24 @@
-import type { Track, UserInfo, WeeklyTops } from "./schemas";
+import type { Track, UserInfo, ChartTops } from "./schemas";
 import type { ChartPeriod } from "./period";
 
-export type WeekDepthLeader = {
+export type ChartDepthLeader = {
   name: string;
   plays: number;
   sharePercent: number;
 };
 
-export type WeekDepth = {
+export type ChartDepth = {
   uniqueArtists: number;
   totalPlays: number;
   /** plays per unique artist — higher = more replay / less browsing */
   playsPerArtist: number;
   /** top artists by plays in the selected period */
-  leaders: WeekDepthLeader[];
+  leaders: ChartDepthLeader[];
   /** combined share of the leaders list */
   leadersSharePercent: number;
 };
 
-export type WeekOverlapHit = {
+export type ChartOverlapHit = {
   artist: string;
   artistRank: number | null;
   artistPlays: number;
@@ -28,8 +28,8 @@ export type WeekOverlapHit = {
   surfaces: number;
 };
 
-export type WeekOverlap = {
-  items: WeekOverlapHit[];
+export type ChartOverlap = {
+  items: ChartOverlapHit[];
 };
 
 export type ListeningDensity = {
@@ -45,9 +45,8 @@ export type ListeningStats = {
   profile: UserInfo | null;
   accountAgeYears: number | null;
   accountAgeLabel: string | null;
-  depth: WeekDepth | null;
-  overlap: WeekOverlap | null;
-  density: ListeningDensity | null;
+  depth: ChartDepth | null;
+  overlap: ChartOverlap | null;
   period: ChartPeriod;
   periodLabel: string;
 };
@@ -58,10 +57,10 @@ function startOfLocalDay(d: Date): number {
   return x.getTime();
 }
 
-export function computeWeekDepth(
+export function computeDepth(
   artists: { name: string; playcount: string }[],
   leaderCount = 5
-): WeekDepth | null {
+): ChartDepth | null {
   if (!artists.length) return null;
   const plays = artists.map((a) => parseInt(a.playcount, 10) || 0);
   const totalPlays = plays.reduce((sum, n) => sum + n, 0);
@@ -90,10 +89,10 @@ export function computeWeekDepth(
   };
 }
 
-export function computeWeekOverlap(
-  tops: WeeklyTops,
+export function computeOverlap(
+  tops: ChartTops,
   limit = 5
-): WeekOverlap | null {
+): ChartOverlap | null {
   type Bucket = {
     artist: string;
     artistRank: number | null;
@@ -146,7 +145,7 @@ export function computeWeekOverlap(
     });
   }
 
-  const items: WeekOverlapHit[] = [];
+  const items: ChartOverlapHit[] = [];
   for (const bucket of Array.from(byArtist.values())) {
     const onArtists = bucket.artistRank != null;
     const onAlbums = bucket.albums.length > 0;

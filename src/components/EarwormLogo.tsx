@@ -1,11 +1,9 @@
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 
 interface EarwormLogoProps {
   className?: string;
   /** When true, plays the sound-wave undulation */
   crawling?: boolean;
-  /** Stop animating after this many ms (home page intro) */
-  stopAfterMs?: number;
   size?: "sm" | "md" | "lg";
 }
 
@@ -54,23 +52,9 @@ function waveStyle(segmentIndex: number, isWaving: boolean) {
 export default function EarwormLogo({
   className = "",
   crawling = true,
-  stopAfterMs,
   size = "md",
 }: EarwormLogoProps) {
   const uid = useId().replace(/:/g, "");
-  const [isWaving, setIsWaving] = useState(crawling || Boolean(stopAfterMs));
-
-  useEffect(() => {
-    if (!stopAfterMs) {
-      setIsWaving(crawling);
-      return;
-    }
-
-    setIsWaving(true);
-    const timer = setTimeout(() => setIsWaving(false), stopAfterMs);
-    return () => clearTimeout(timer);
-  }, [crawling, stopAfterMs]);
-
   const headGrad = `headFill-${uid}`;
   const headIndex = SEGMENTS - 1;
   const headX = START_X + headIndex * SPACING + 5;
@@ -98,8 +82,8 @@ export default function EarwormLogo({
           return (
             <g
               key={`under-${i}`}
-              className={isWaving ? "worm-wave-seg" : undefined}
-              style={waveStyle(i, isWaving)}
+              className={crawling ? "worm-wave-seg" : undefined}
+              style={waveStyle(i, crawling)}
             >
               <circle
                 cx={cx}
@@ -116,8 +100,8 @@ export default function EarwormLogo({
           return (
             <g
               key={i}
-              className={isWaving ? "worm-wave-seg" : undefined}
-              style={waveStyle(i, isWaving)}
+              className={crawling ? "worm-wave-seg" : undefined}
+              style={waveStyle(i, crawling)}
             >
               <circle
                 cx={cx}
@@ -130,8 +114,8 @@ export default function EarwormLogo({
         })}
 
         <g
-          className={isWaving ? "worm-wave-seg" : undefined}
-          style={waveStyle(headIndex, isWaving)}
+          className={crawling ? "worm-wave-seg" : undefined}
+          style={waveStyle(headIndex, crawling)}
         >
           <circle cx={headX} cy={BASE_Y} r="11" fill={`url(#${headGrad})`} />
 
