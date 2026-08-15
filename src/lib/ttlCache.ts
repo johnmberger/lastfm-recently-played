@@ -30,3 +30,8 @@ export async function withTtlCache<T>(
   store.set(key, { value, expiresAt: now + ttlSeconds * 1000 });
   return value;
 }
+
+/** Test helper — clears the in-process cache. */
+export function clearTtlCache(): void {
+  store.clear();
+}

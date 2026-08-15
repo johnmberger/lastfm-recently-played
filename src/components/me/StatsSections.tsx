@@ -1,19 +1,11 @@
 import { formatNumber } from "@/lib/dateUtils";
-import type { ChartDepth, ChartOverlap } from "@/lib/listeningStats";
+import {
+  depthVibe,
+  type ChartDepth,
+  type ChartOverlap,
+} from "@/lib/listeningStats";
 import type { UserInfo } from "@/lib/schemas";
 import { StatCard } from "@/components/shared/StatCard";
-
-/** Vibe from chart concentration — share of plays, not raw plays/artist. */
-export function depthVibe(depth: ChartDepth): string {
-  const topShare = depth.leaders[0]?.sharePercent ?? 0;
-  const top5 = depth.leadersSharePercent;
-
-  // ~20%+ on one artist is already heavy rotation
-  if (topShare >= 20 || top5 >= 70) return "deep in the loop";
-  if (topShare >= 12 || top5 >= 50) return "a healthy amount of repeat";
-  if (topShare >= 7 || top5 >= 35) return "mixing it up";
-  return "lots of variety";
-}
 
 export function registeredLabel(unix: number): string {
   return new Date(unix * 1000)
