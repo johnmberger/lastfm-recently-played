@@ -121,8 +121,8 @@ export default function StatsPage({ stats }: StatsPageProps) {
           footer={
             <PageFooterLinks
               links={[
-                { href: "/", label: "← latest tracks" },
-                { href: "/top", label: "top →" },
+                { href: "/", label: "latest tracks", back: true },
+                { href: "/top", label: "top" },
               ]}
             />
           }

@@ -135,7 +135,7 @@ export default function PageShell({
 export function PageFooterLinks({
   links,
 }: {
-  links: { href: string; label: string }[];
+  links: { href: string; label: string; back?: boolean }[];
 }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -144,9 +144,15 @@ export function PageFooterLinks({
           <Link
             key={link.href + link.label}
             href={link.href}
-            className="text-dark-300 hover:text-pink-300 transition-colors"
+            className="inline-flex items-center gap-1.5 text-dark-300 hover:text-pink-300 transition-colors group"
           >
+            {link.back ? (
+              <IconChevronLeft className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+            ) : null}
             {link.label}
+            {!link.back ? (
+              <IconChevronRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+            ) : null}
           </Link>
         ))}
       </div>

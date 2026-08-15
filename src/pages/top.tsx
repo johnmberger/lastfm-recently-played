@@ -329,8 +329,8 @@ export default function TopsPage(props: TopsPageProps) {
           footer={
             <PageFooterLinks
               links={[
-                { href: "/", label: "← back to recent tracks" },
-                { href: "/me", label: "the numbers →" },
+                { href: "/", label: "latest tracks", back: true },
+                { href: "/me", label: "the numbers" },
               ]}
             />
           }
