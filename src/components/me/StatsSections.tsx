@@ -1,35 +1,17 @@
 import { formatNumber } from "@/lib/dateUtils";
 import type { ChartDepth, ChartOverlap } from "@/lib/listeningStats";
 import type { UserInfo } from "@/lib/schemas";
+import { StatCard } from "@/components/shared/StatCard";
 
-export function StatCard({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-}) {
-  return (
-    <div className="panel px-4 py-5 sm:px-5 sm:py-6">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-pink-300/80 mb-3">
-        {label}
-      </p>
-      <p className="text-2xl sm:text-3xl font-bold text-white tabular-nums leading-tight tracking-tight break-words">
-        {value}
-      </p>
-      {hint ? (
-        <p className="text-xs text-dark-400 mt-2 leading-relaxed">{hint}</p>
-      ) : null}
-    </div>
-  );
-}
+/** Vibe from chart concentration — share of plays, not raw plays/artist. */
+export function depthVibe(depth: ChartDepth): string {
+  const topShare = depth.leaders[0]?.sharePercent ?? 0;
+  const top5 = depth.leadersSharePercent;
 
-export function depthVibe(playsPerArtist: number): string {
-  if (playsPerArtist >= 8) return "deep in the loop";
-  if (playsPerArtist >= 4) return "a healthy amount of repeat";
-  if (playsPerArtist >= 2) return "mixing it up";
+  // ~20%+ on one artist is already heavy rotation
+  if (topShare >= 20 || top5 >= 70) return "deep in the loop";
+  if (topShare >= 12 || top5 >= 50) return "a healthy amount of repeat";
+  if (topShare >= 7 || top5 >= 35) return "mixing it up";
   return "lots of variety";
 }
 
@@ -130,7 +112,8 @@ export function DurationStatsSection({
                           {leader.sharePercent}%
                           <span className="text-dark-500 hidden sm:inline">
                             {" "}
-                            · {formatNumber(leader.plays)}
+                            · {formatNumber(leader.plays)}{" "}
+                            {leader.plays === 1 ? "play" : "plays"}
                           </span>
                         </span>
                       </li>
@@ -140,7 +123,7 @@ export function DurationStatsSection({
                 <p className="text-xs text-dark-400">
                   top {depth.leaders.length} = {depth.leadersSharePercent}% of
                   plays · {depth.playsPerArtist} plays / artist ·{" "}
-                  {depthVibe(depth.playsPerArtist)}
+                  {depthVibe(depth)}
                 </p>
               </>
             ) : null}
@@ -151,10 +134,9 @@ export function DurationStatsSection({
 
         {overlap && overlap.items.length > 0 ? (
           <div className="panel px-4 py-5 sm:px-5 sm:py-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-pink-300/80 mb-1">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-pink-300/80 mb-4">
               earworms
             </p>
-            <p className="text-xs text-dark-500 mb-4">on more than one chart</p>
             <ul className="space-y-3">
               {overlap.items.map((hit) => {
                 const pieces = [

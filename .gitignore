@@ -40,3 +40,6 @@ yarn-error.log*
 .vscode/
 *.iml
 .swc/
+
+# Lighthouse
+.lighthouse/

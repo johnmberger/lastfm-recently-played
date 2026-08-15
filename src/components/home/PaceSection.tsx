@@ -1,6 +1,6 @@
 import { formatNumber } from "@/lib/dateUtils";
 import type { ListeningDensity } from "@/lib/listeningStats";
-import { StatCard } from "@/components/me/StatsSections";
+import { StatCard } from "@/components/shared/StatCard";
 
 function densityDelta(today: number, yesterday: number): string {
   if (today === yesterday) return "same as yesterday";

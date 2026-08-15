@@ -1,14 +1,23 @@
 import { Track } from "@/lib/lastfm";
-import CoverImage from "@/components/CoverImage";
+import CoverImage from "@/components/shared/CoverImage";
+import { IconExternalLink } from "@/components/shared/icons";
+import { pickImageUrl, sizedLastfmImage } from "@/lib/lastfm/images";
 import { formatTrackDate } from "@/lib/dateUtils";
 
 interface TrackCardProps {
   track: Track;
+  /** First visible cards should load eagerly for LCP */
+  priority?: boolean;
 }
 
-export default function TrackCard({ track }: TrackCardProps) {
-  const albumArtUrl =
-    track.image.find((img) => img.size === "extralarge")?.["#text"] || "";
+export default function TrackCard({
+  track,
+  priority = false,
+}: TrackCardProps) {
+  const albumArtUrl = sizedLastfmImage(
+    pickImageUrl(track.image, "full"),
+    "full"
+  );
 
   const isNowPlaying = track["@attr"]?.nowplaying === "true";
 
@@ -30,6 +39,7 @@ export default function TrackCard({ track }: TrackCardProps) {
           alt={`${track.name} album art`}
           className="w-full h-full text-5xl transition-transform duration-700 ease-out group-hover:scale-[1.02]"
           rounded="rounded-none"
+          priority={priority}
         />
 
         <div className="absolute top-4 right-4 z-20 opacity-0 translate-y-2 scale-90 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 transition-all duration-500 ease-out">
@@ -39,19 +49,7 @@ export default function TrackCard({ track }: TrackCardProps) {
             rel="noopener noreferrer"
             className="w-9 h-9 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center border border-purple-400/30 hover:from-purple-500/30 hover:to-pink-500/30 hover:scale-110 transition-all duration-300 ease-out md:backdrop-blur-xl"
           >
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
+            <IconExternalLink className="w-4 h-4 text-white" />
           </a>
         </div>
       </div>

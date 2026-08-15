@@ -1,14 +1,15 @@
 import { GetServerSideProps } from "next";
 import { getListeningStats, ListeningStats } from "@/lib/lastfm";
-import DurationControl from "@/components/DurationControl";
+import { CHART_PAGE_CACHE_CONTROL } from "@/lib/ttlCache";
+import DurationControl from "@/components/duration/DurationControl";
 import {
   DurationPendingProvider,
   useIsDurationPending,
-} from "@/components/DurationPending";
-import MetaTags from "@/components/MetaTags";
-import EmptyState from "@/components/EmptyState";
-import PageShell, { PageFooterLinks } from "@/components/PageShell";
-import { MePeriodSkeleton } from "@/components/Skeleton";
+} from "@/components/duration/DurationPending";
+import MetaTags from "@/components/layout/MetaTags";
+import EmptyState from "@/components/layout/EmptyState";
+import PageShell, { PageFooterLinks } from "@/components/layout/PageShell";
+import { MePeriodSkeleton } from "@/components/me/MePeriodSkeleton";
 import {
   DurationStatsSection,
   LifetimeSection,
@@ -26,6 +27,7 @@ type StatsPageProps = {
 export const getServerSideProps: GetServerSideProps<StatsPageProps> = async (
   context
 ) => {
+  context.res.setHeader("Cache-Control", CHART_PAGE_CACHE_CONTROL);
   const period = parsePeriod(context.query.period);
   try {
     const stats = await getListeningStats(period);
@@ -119,7 +121,7 @@ export default function StatsPage({ stats }: StatsPageProps) {
           footer={
             <PageFooterLinks
               links={[
-                { href: "/", label: "← latest tracks", primary: true },
+                { href: "/", label: "← latest tracks" },
                 { href: "/top", label: "top →" },
               ]}
             />

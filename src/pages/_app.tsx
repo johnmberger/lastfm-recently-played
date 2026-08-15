@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import LoadingScreen from "@/components/LoadingScreen";
+import LoadingScreen from "@/components/layout/LoadingScreen";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [splash, setSplash] = useState<"boot" | "show" | "done">("boot");
 
   useEffect(() => {
-    let prevPath = router.asPath.split("?")[0];
+    let prevPath = window.location.pathname;
     const onComplete = (url: string) => {
       const nextPath = url.split("?")[0];
       // Query-only changes (e.g. duration) keep scroll; page changes jump to top

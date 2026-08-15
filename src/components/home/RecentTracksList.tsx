@@ -1,5 +1,5 @@
 import { Track } from "@/lib/lastfm";
-import TrackCard from "./TrackCard";
+import TrackCard from "@/components/home/TrackCard";
 
 function trackKey(track: Track, index: number): string {
   const artist = track.artist?.["#text"] ?? "";
@@ -13,7 +13,11 @@ export default function RecentTracksList({ tracks }: { tracks: Track[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
       {tracks.map((track, index) => (
-        <TrackCard key={trackKey(track, index)} track={track} />
+        <TrackCard
+          key={trackKey(track, index)}
+          track={track}
+          priority={index < 4}
+        />
       ))}
     </div>
   );

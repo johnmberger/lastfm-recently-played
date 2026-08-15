@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LASTFM_IMAGE_PLACEHOLDER } from "@/lib/lastfm/images";
 
 type CoverImageProps = {
@@ -7,6 +7,8 @@ type CoverImageProps = {
   className?: string;
   rounded?: string;
   alt?: string;
+  /** Above-the-fold covers: skip lazy load, hint high fetch priority */
+  priority?: boolean;
 };
 
 /** Survives page remounts so returning to a grid doesn't re-shimmer. */
@@ -19,14 +21,20 @@ export default function CoverImage({
   className = "w-12 h-12",
   rounded = "rounded-xl",
   alt = "",
+  priority = false,
 }: CoverImageProps) {
   const [failed, setFailed] = useState(false);
-  const [loaded, setLoaded] = useState(() =>
-    Boolean(image) && loadedSrcs.has(image)
-  );
+  // Always start unloaded on the server so SSR/client markup matches
+  const [loaded, setLoaded] = useState(false);
   const isPlaceholder = !image || image.includes(LASTFM_IMAGE_PLACEHOLDER);
   const showFallback = isPlaceholder || failed;
   const initial = name.trim().charAt(0).toUpperCase() || "?";
+
+  useEffect(() => {
+    if (!image || failed || !loadedSrcs.has(image)) return;
+    const id = requestAnimationFrame(() => setLoaded(true));
+    return () => cancelAnimationFrame(id);
+  }, [image, failed]);
 
   if (showFallback) {
     return (
@@ -62,7 +70,9 @@ export default function CoverImage({
           setLoaded(true);
         }}
         onError={() => setFailed(true)}
-        loading="lazy"
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : undefined}
+        decoding={priority ? "sync" : "async"}
       />
     </div>
   );

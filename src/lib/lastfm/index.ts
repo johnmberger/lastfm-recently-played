@@ -28,6 +28,10 @@ import {
 } from "../period";
 import { asArray, lastfmRequest } from "./request";
 import { pickImageUrl } from "./images";
+import {
+  CHART_CACHE_TTL_SECONDS,
+  withTtlCache,
+} from "../ttlCache";
 
 export type {
   Track,
@@ -74,7 +78,7 @@ export async function getTopArtists({
       limit: String(limit),
     },
     schema: topArtistsSchema,
-    revalidate: 60,
+    revalidate: 300,
     label: "top artists",
   });
 
@@ -97,7 +101,7 @@ export async function getTopAlbums({
       limit: String(limit),
     },
     schema: topAlbumsSchema,
-    revalidate: 60,
+    revalidate: 300,
     label: "top albums",
   });
 
@@ -120,7 +124,7 @@ export async function getTopTracks({
       limit: String(limit),
     },
     schema: topTracksSchema,
-    revalidate: 60,
+    revalidate: 300,
     label: "top tracks",
   });
 
@@ -198,29 +202,31 @@ function toTrackViews(
 export async function getChartTops(
   period: ChartPeriod = DEFAULT_CHART_PERIOD
 ): Promise<ChartTops> {
-  const [topArtists, topAlbums, topTracks] = await Promise.all([
-    getTopArtists({ period, limit: 50 }).catch((error) => {
-      console.error("Top artists fetch failed", error);
-      return [] as TopArtist[];
-    }),
-    getTopAlbums({ period, limit: 100 }).catch((error) => {
-      console.error("Top albums fetch failed", error);
-      return [] as TopAlbum[];
-    }),
-    getTopTracks({ period, limit: 50 }).catch((error) => {
-      console.error("Top tracks fetch failed", error);
-      return [] as TopTrack[];
-    }),
-  ]);
+  return withTtlCache(`chart-tops:${period}`, CHART_CACHE_TTL_SECONDS, async () => {
+    const [topArtists, topAlbums, topTracks] = await Promise.all([
+      getTopArtists({ period, limit: 50 }).catch((error) => {
+        console.error("Top artists fetch failed", error);
+        return [] as TopArtist[];
+      }),
+      getTopAlbums({ period, limit: 100 }).catch((error) => {
+        console.error("Top albums fetch failed", error);
+        return [] as TopAlbum[];
+      }),
+      getTopTracks({ period, limit: 50 }).catch((error) => {
+        console.error("Top tracks fetch failed", error);
+        return [] as TopTrack[];
+      }),
+    ]);
 
-  const imageByName = buildArtistImageMapFromAlbums(topAlbums);
+    const imageByName = buildArtistImageMapFromAlbums(topAlbums);
 
-  return {
-    artists: toArtistViews(topArtists, imageByName),
-    albums: toAlbumViews(topAlbums),
-    tracks: toTrackViews(topTracks, imageByName),
-    period,
-  };
+    return {
+      artists: toArtistViews(topArtists, imageByName),
+      albums: toAlbumViews(topAlbums),
+      tracks: toTrackViews(topTracks, imageByName),
+      period,
+    };
+  });
 }
 
 export async function getUserInfo(): Promise<UserInfo> {
@@ -251,29 +257,35 @@ export async function getUserInfo(): Promise<UserInfo> {
 export async function getListeningStats(
   period: ChartPeriod = DEFAULT_CHART_PERIOD
 ): Promise<ListeningStats> {
-  const [profile, tops] = await Promise.all([
-    getUserInfo().catch((error) => {
-      console.error("User info fetch failed", error);
-      return null;
-    }),
-    getChartTops(period).catch((error) => {
-      console.error("Chart tops fetch failed", error);
-      return null;
-    }),
-  ]);
+  return withTtlCache(
+    `listening-stats:${period}`,
+    CHART_CACHE_TTL_SECONDS,
+    async () => {
+      const [profile, tops] = await Promise.all([
+        getUserInfo().catch((error) => {
+          console.error("User info fetch failed", error);
+          return null;
+        }),
+        getChartTops(period).catch((error) => {
+          console.error("Chart tops fetch failed", error);
+          return null;
+        }),
+      ]);
 
-  const age =
-    profile && profile.registeredUnix > 0
-      ? formatAccountAge(profile.registeredUnix)
-      : null;
+      const age =
+        profile && profile.registeredUnix > 0
+          ? formatAccountAge(profile.registeredUnix)
+          : null;
 
-  return {
-    profile,
-    accountAgeYears: age?.years ?? null,
-    accountAgeLabel: age?.label ?? null,
-    depth: tops ? computeDepth(tops.artists) : null,
-    overlap: tops ? computeOverlap(tops) : null,
-    period,
-    periodLabel: durationControlLabel(period),
-  };
+      return {
+        profile,
+        accountAgeYears: age?.years ?? null,
+        accountAgeLabel: age?.label ?? null,
+        depth: tops ? computeDepth(tops.artists) : null,
+        overlap: tops ? computeOverlap(tops) : null,
+        period,
+        periodLabel: durationControlLabel(period),
+      };
+    }
+  );
 }

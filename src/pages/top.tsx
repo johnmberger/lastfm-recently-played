@@ -6,18 +6,25 @@ import {
   TopAlbumView,
   TopTrackView,
 } from "@/lib/lastfm";
-import EmptyState from "@/components/EmptyState";
-import CoverImage from "@/components/CoverImage";
-import DurationControl from "@/components/DurationControl";
+import { CHART_PAGE_CACHE_CONTROL } from "@/lib/ttlCache";
+import EmptyState from "@/components/layout/EmptyState";
+import CoverImage from "@/components/shared/CoverImage";
+import DurationControl from "@/components/duration/DurationControl";
 import {
   DurationPendingProvider,
   useIsDurationPending,
-} from "@/components/DurationPending";
-import MetaTags from "@/components/MetaTags";
-import PageShell, { PageFooterLinks } from "@/components/PageShell";
-import { TopPeriodSkeleton } from "@/components/Skeleton";
+} from "@/components/duration/DurationPending";
+import MetaTags from "@/components/layout/MetaTags";
+import PageShell, { PageFooterLinks } from "@/components/layout/PageShell";
+import { TopPeriodSkeleton } from "@/components/top/TopPeriodSkeleton";
 import { RankRow, SpotlightCard } from "@/components/top/ChartCards";
 import { formatNumber, getArtistChartStats } from "@/lib/dateUtils";
+import { sizedLastfmImage } from "@/lib/lastfm/images";
+import {
+  IconDisc,
+  IconMusic,
+  IconUsers,
+} from "@/components/shared/icons";
 import {
   ChartPeriod,
   parsePeriod,
@@ -35,6 +42,7 @@ type TopsPageProps = {
 export const getServerSideProps: GetServerSideProps<TopsPageProps> = async (
   context
 ) => {
+  context.res.setHeader("Cache-Control", CHART_PAGE_CACHE_CONTROL);
   const period = parsePeriod(context.query.period);
   try {
     const payload = await getChartTops(period);
@@ -77,14 +85,6 @@ function TopsBody({ artists, albums, tracks, period }: TopsPageProps) {
     () => getArtistChartStats(artistPlays),
     [artistPlays]
   );
-  const albumTotal = useMemo(
-    () => albumPlays.reduce((s, n) => s + n, 0),
-    [albumPlays]
-  );
-  const trackTotal = useMemo(
-    () => trackPlays.reduce((s, n) => s + n, 0),
-    [trackPlays]
-  );
 
   const topArtist = artists[0];
   const topAlbum = albums[0];
@@ -116,6 +116,7 @@ function TopsBody({ artists, albums, tracks, period }: TopsPageProps) {
                   plays={parseInt(topArtist.playcount, 10) || 0}
                   image={topArtist.image}
                   href={topArtist.url}
+                  priority
                 />
               ) : null}
               {topAlbum ? (
@@ -126,6 +127,7 @@ function TopsBody({ artists, albums, tracks, period }: TopsPageProps) {
                   plays={parseInt(topAlbum.playcount, 10) || 0}
                   image={topAlbum.image}
                   href={topAlbum.url}
+                  priority
                 />
               ) : null}
               {topTrack ? (
@@ -136,6 +138,7 @@ function TopsBody({ artists, albums, tracks, period }: TopsPageProps) {
                   plays={parseInt(topTrack.playcount, 10) || 0}
                   image={topTrack.image}
                   href={topTrack.url}
+                  priority
                 />
               ) : null}
             </div>
@@ -149,59 +152,38 @@ function TopsBody({ artists, albums, tracks, period }: TopsPageProps) {
               {[
                 {
                   heading: "artists",
-                  stats: [
-                    {
-                      label: "plays",
-                      value: formatNumber(artistStats.totalPlays),
-                    },
-                    {
-                      label: "artists",
-                      value: formatNumber(artistStats.artistCount),
-                    },
-                  ],
+                  value: formatNumber(artists.length),
+                  icon: IconUsers,
                 },
                 {
                   heading: "albums",
-                  stats: [
-                    { label: "plays", value: formatNumber(albumTotal) },
-                    {
-                      label: "albums",
-                      value: formatNumber(albums.length),
-                    },
-                  ],
+                  value: formatNumber(albums.length),
+                  icon: IconDisc,
                 },
                 {
                   heading: "tracks",
-                  stats: [
-                    { label: "plays", value: formatNumber(trackTotal) },
-                    {
-                      label: "tracks",
-                      value: formatNumber(tracks.length),
-                    },
-                  ],
+                  value: formatNumber(tracks.length),
+                  icon: IconMusic,
                 },
-              ].map((group) => (
-                <div
-                  key={group.heading}
-                  className="panel px-4 py-5 text-center"
-                >
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-pink-300/80 mb-4">
-                    {group.heading}
-                  </p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {group.stats.map((stat) => (
-                      <div key={stat.label} className="min-w-0">
-                        <p className="text-2xl sm:text-3xl font-bold text-white tabular-nums leading-none tracking-tight">
-                          {stat.value}
-                        </p>
-                        <p className="text-xs text-dark-400 mt-1.5 truncate">
-                          {stat.label}
-                        </p>
-                      </div>
-                    ))}
+              ].map((group) => {
+                const Icon = group.icon;
+                return (
+                  <div
+                    key={group.heading}
+                    className="panel px-4 py-5 text-center"
+                  >
+                    <div className="flex justify-center mb-3 text-pink-300/70">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-pink-300/80 mb-3">
+                      {group.heading}
+                    </p>
+                    <p className="text-2xl sm:text-3xl font-bold text-white tabular-nums leading-none tracking-tight">
+                      {group.value}
+                    </p>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -295,7 +277,7 @@ function TopsBody({ artists, albums, tracks, period }: TopsPageProps) {
                     >
                       <CoverImage
                         name={album.name}
-                        image={album.image}
+                        image={sizedLastfmImage(album.image, "tile")}
                         className="w-28 h-28 sm:w-32 sm:h-32 shadow-lg shadow-black/30 group-hover:scale-[1.03] transition-transform duration-300"
                         rounded="rounded-2xl"
                       />
@@ -347,7 +329,7 @@ export default function TopsPage(props: TopsPageProps) {
           footer={
             <PageFooterLinks
               links={[
-                { href: "/", label: "← back to recent tracks", primary: true },
+                { href: "/", label: "← back to recent tracks" },
                 { href: "/me", label: "the numbers →" },
               ]}
             />

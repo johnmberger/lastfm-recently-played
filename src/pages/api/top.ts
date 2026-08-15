@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getChartTops } from "@/lib/lastfm";
 import { parsePeriod } from "@/lib/period";
 import { logApiError } from "@/lib/apiError";
+import { CHART_PAGE_CACHE_CONTROL } from "@/lib/ttlCache";
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,6 +15,7 @@ export default async function handler(
   try {
     const period = parsePeriod(req.query.period);
     const payload = await getChartTops(period);
+    res.setHeader("Cache-Control", CHART_PAGE_CACHE_CONTROL);
     res.status(200).json(payload);
   } catch (error) {
     logApiError("/api/top", error);

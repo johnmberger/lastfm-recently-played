@@ -1,8 +1,14 @@
-import RecentTracksList from "@/components/RecentTracksList";
-import EmptyState from "@/components/EmptyState";
-import BuiltBy from "@/components/BuiltBy";
-import PageShell from "@/components/PageShell";
-import PaceSection from "@/components/PaceSection";
+import RecentTracksList from "@/components/home/RecentTracksList";
+import EmptyState from "@/components/layout/EmptyState";
+import BuiltBy from "@/components/layout/BuiltBy";
+import PageShell from "@/components/layout/PageShell";
+import PaceSection from "@/components/home/PaceSection";
+import {
+  IconActivity,
+  IconChevronRight,
+  IconRanking,
+  IconRefresh,
+} from "@/components/shared/icons";
 import { getRecentTracks, Track } from "@/lib/lastfm";
 import {
   computeListeningDensity,
@@ -11,7 +17,7 @@ import {
 import { GetStaticProps } from "next";
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
-import MetaTags from "@/components/MetaTags";
+import MetaTags from "@/components/layout/MetaTags";
 import { formatTime, getCurrentDate } from "@/lib/dateUtils";
 
 const DISPLAY_LIMIT = 51;
@@ -78,7 +84,7 @@ export default function Home({
   );
   const [seenPropsSig, setSeenPropsSig] = useState(propsSig);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(getCurrentDate());
+  const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const refreshingRef = useRef(false);
 
   // Sync when ISR / navigation provides a new props snapshot
@@ -180,28 +186,16 @@ export default function Home({
                   className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 disabled:opacity-50"
                   title="refresh tracks"
                 >
-                  <svg
-                    className={`w-4 h-4 ${
-                      isRefreshing ? "animate-spin" : ""
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
+                  <IconRefresh
+                    className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+                  />
                 </button>
               </div>
             </div>
             <p className="text-dark-400">
               discover what i&apos;ve been listening to
             </p>
-            <div className="text-xs text-dark-500 mt-1">
+            <div className="text-xs text-dark-500 mt-1" suppressHydrationWarning>
               last updated: {formatTime(lastUpdated)}
             </div>
           </>
@@ -210,9 +204,12 @@ export default function Home({
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-10 sm:gap-12">
             <div className="flex flex-col gap-8 sm:gap-10 max-w-lg">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-dark-400 mb-2">
-                  charts
-                </p>
+                <div className="flex items-center gap-2 text-pink-300/80 mb-2">
+                  <IconRanking className="w-4 h-4" />
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-dark-400">
+                    charts
+                  </p>
+                </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
                   top
                 </h2>
@@ -224,18 +221,16 @@ export default function Home({
                   className="inline-flex items-center gap-2 text-pink-300 hover:text-pink-200 transition-colors font-semibold group"
                 >
                   see the full rankings
-                  <span
-                    aria-hidden="true"
-                    className="transition-transform duration-200 group-hover:translate-x-1"
-                  >
-                    →
-                  </span>
+                  <IconChevronRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-dark-400 mb-2">
-                  stats
-                </p>
+                <div className="flex items-center gap-2 text-pink-300/80 mb-2">
+                  <IconActivity className="w-4 h-4" />
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-dark-400">
+                    stats
+                  </p>
+                </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
                   the numbers
                 </h2>
@@ -248,12 +243,7 @@ export default function Home({
                   className="inline-flex items-center gap-2 text-pink-300 hover:text-pink-200 transition-colors font-semibold group"
                 >
                   dig into the stats
-                  <span
-                    aria-hidden="true"
-                    className="transition-transform duration-200 group-hover:translate-x-1"
-                  >
-                    →
-                  </span>
+                  <IconChevronRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </div>
             </div>

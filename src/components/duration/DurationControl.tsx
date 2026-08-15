@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { PERIOD_OPTIONS } from "@/lib/period";
-import { useDurationPendingContext } from "@/components/DurationPending";
+import { useDurationPendingContext } from "@/components/duration/DurationPending";
 
 type DurationControlProps = {
   className?: string;

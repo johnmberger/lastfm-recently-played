@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { ReactNode } from "react";
-import EarwormLogo from "@/components/EarwormLogo";
-import BuiltBy from "@/components/BuiltBy";
+import EarwormLogo from "@/components/layout/EarwormLogo";
+import BuiltBy from "@/components/layout/BuiltBy";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+} from "@/components/shared/icons";
 
 const DOT_BG =
   "bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]";
@@ -64,21 +68,11 @@ function SiteNav({ items }: { items: NavItem[] }) {
           className="inline-flex items-center gap-1.5 text-dark-300 hover:text-pink-300 transition-colors group"
         >
           {item.back ? (
-            <span
-              aria-hidden="true"
-              className="transition-transform duration-200 group-hover:-translate-x-0.5"
-            >
-              ←
-            </span>
+            <IconChevronLeft className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
           ) : null}
           {item.label}
           {!item.back ? (
-            <span
-              aria-hidden="true"
-              className="transition-transform duration-200 group-hover:translate-x-0.5"
-            >
-              →
-            </span>
+            <IconChevronRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
           ) : null}
         </Link>
       ))}
@@ -141,7 +135,7 @@ export default function PageShell({
 export function PageFooterLinks({
   links,
 }: {
-  links: { href: string; label: string; primary?: boolean }[];
+  links: { href: string; label: string }[];
 }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -150,11 +144,7 @@ export function PageFooterLinks({
           <Link
             key={link.href + link.label}
             href={link.href}
-            className={
-              link.primary
-                ? "text-pink-400 hover:text-pink-300 transition-colors duration-200 font-semibold"
-                : "text-dark-300 hover:text-pink-300 transition-colors"
-            }
+            className="text-dark-300 hover:text-pink-300 transition-colors"
           >
             {link.label}
           </Link>

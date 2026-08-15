@@ -13,11 +13,15 @@ export const formatTrackDate = (uts: string): string => {
 };
 
 export const formatTime = (date: Date): string => {
-  return date.toLocaleTimeString();
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 };
 
 export const formatNumber = (value: number): string => {
-  return value.toLocaleString();
+  return value.toLocaleString("en-US");
 };
 
 export const getCurrentDate = (): Date => new Date();

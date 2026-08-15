@@ -1,5 +1,8 @@
-import CoverImage from "@/components/CoverImage";
-import { LASTFM_IMAGE_PLACEHOLDER } from "@/lib/lastfm/images";
+import CoverImage from "@/components/shared/CoverImage";
+import {
+  LASTFM_IMAGE_PLACEHOLDER,
+  sizedLastfmImage,
+} from "@/lib/lastfm/images";
 import { formatNumber } from "@/lib/dateUtils";
 
 export function ShareBar({
@@ -29,6 +32,7 @@ export function SpotlightCard({
   plays,
   image,
   href,
+  priority = false,
 }: {
   label: string;
   title: string;
@@ -36,7 +40,12 @@ export function SpotlightCard({
   plays: number;
   image: string;
   href: string;
+  priority?: boolean;
 }) {
+  const hasArt = Boolean(image) && !image.includes(LASTFM_IMAGE_PLACEHOLDER);
+  const blurUrl = hasArt ? sizedLastfmImage(image, "thumb") : "";
+  const coverUrl = hasArt ? sizedLastfmImage(image, "tile") : "";
+
   return (
     <a
       href={href}
@@ -44,24 +53,30 @@ export function SpotlightCard({
       rel="noopener noreferrer"
       className="group panel relative overflow-hidden hover:bg-white/[0.07] transition-all duration-300 px-3 py-4 sm:px-4 sm:py-5 h-full flex flex-col items-center text-center"
     >
-      <div className="absolute inset-0 opacity-40 pointer-events-none">
-        {image && !image.includes(LASTFM_IMAGE_PLACEHOLDER) ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={image}
-            alt=""
-            className="w-full h-full object-cover scale-110 blur-2xl opacity-50"
-          />
-        ) : (
+      <div
+        className="absolute inset-0 opacity-40 pointer-events-none scale-110 blur-2xl"
+        aria-hidden="true"
+        style={
+          blurUrl
+            ? {
+                backgroundImage: `url(${blurUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }
+            : undefined
+        }
+      >
+        {!blurUrl ? (
           <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-purple-500/20 to-blue-500/30" />
-        )}
+        ) : null}
       </div>
       <div className="relative flex flex-col items-center w-full min-w-0">
         <CoverImage
           name={title}
-          image={image}
+          image={coverUrl}
           className="w-40 h-40 sm:w-44 sm:h-44 text-4xl shadow-lg shadow-black/40"
           rounded="rounded-xl"
+          priority={priority}
         />
         <p className="text-[10px] uppercase tracking-[0.2em] text-pink-300/80 mt-3 mb-1">
           {label}
@@ -99,6 +114,7 @@ export function RankRow({
   image: string;
   href: string;
 }) {
+  const thumb = image ? sizedLastfmImage(image, "thumb") : "";
   return (
     <a
       href={href}
@@ -109,7 +125,7 @@ export function RankRow({
       <span className="w-6 text-center text-xs font-semibold text-dark-500 tabular-nums shrink-0">
         {rank}
       </span>
-      <CoverImage name={title} image={image} className="w-10 h-10" />
+      <CoverImage name={title} image={thumb} className="w-10 h-10" />
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2 mb-1">
           <div className="min-w-0">

@@ -1,4 +1,4 @@
-import EarwormLogo from "@/components/EarwormLogo";
+import EarwormLogo from "@/components/layout/EarwormLogo";
 
 interface LoadingScreenProps {
   isLoading: boolean;
